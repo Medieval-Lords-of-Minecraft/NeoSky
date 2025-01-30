@@ -1,0 +1,14 @@
+name: NeoSky
+main: me.neoblade298.neorogue.NeoSky
+authors: [Ascheladd, FoPzl]
+depend: [NeoCore]
+softdepend: []
+version: 0.1
+api-version: 1.20
+commands:
+   neosky:
+      aliases: [ns]
+      description: NeoSky General command
+   neoskyadmin:
+      aliases: [nsa]
+      description: NeoSky Admin command
