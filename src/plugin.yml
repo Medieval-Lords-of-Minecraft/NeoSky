@@ -1,5 +1,5 @@
 name: NeoSky
-main: me.neoblade298.neorogue.NeoSky
+main: me.neoblade298.neosky.NeoSky
 authors: [Ascheladd, FoPzl]
 depend: [NeoCore]
 softdepend: []
