@@ -3,24 +3,34 @@ package me.neoblade298.neosky;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class Island {
-    World world = Bukkit.getWorld("neoskyblockworld");
-    int x, z;
+    private static final int MAX_ISLAND_RADIUS = 2; // chunks
+    private static final int ISLAND_BUFFER = 1; // chunks
+    private static final int MAX_ISLANDS_PER_ROW = 3; // chunks
 
-    public Island(Player player) {
-        x = 16 * (int)(player.getUniqueId().getLeastSignificantBits() % 10);
-        z = 0;
+    static int islandCnt = 0;
 
-        for(int clearX = x - 16; clearX < x + 16; clearX++) {
-            for(int clearZ = z - 16; clearZ < z + 16; clearZ++) {
-                Location loc = new Location(world, clearX, 64, clearZ);
-                world.getBlockAt(loc).setType(Material.COBBLESTONE);
+    Player owner;
+    int index;
+    Location center;
+
+    public Island(Player owner) {
+        this.owner = owner;
+
+        index = islandCnt++;
+        int chunkX = ((index % MAX_ISLANDS_PER_ROW) + 1) * ISLAND_BUFFER + ((index % MAX_ISLANDS_PER_ROW) * 2 + 1) * MAX_ISLAND_RADIUS;
+        int chunkZ = ((index / MAX_ISLANDS_PER_ROW) + 1) * ISLAND_BUFFER + ((index / MAX_ISLANDS_PER_ROW) * 2 + 1) * MAX_ISLAND_RADIUS;
+
+        center = new Location(Bukkit.getWorld("neoskyblockworld"), chunkX * 16, 64, chunkZ * 16);
+
+        for(int xOffset = -1; xOffset <= 1; xOffset++) {
+            for(int zOffset = -1; zOffset <= 1; zOffset++) {
+                center.add(xOffset, 0, zOffset).getBlock().setType(Material.COBBLESTONE);
             }
         }
 
-        player.teleport(new Location(world, x, 65, z));
+        owner.teleport(center.add(0, 1, 0));
     }
 }
