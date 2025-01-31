@@ -27,10 +27,10 @@ public class Island {
 
         for(int xOffset = -1; xOffset <= 1; xOffset++) {
             for(int zOffset = -1; zOffset <= 1; zOffset++) {
-                center.add(xOffset, 0, zOffset).getBlock().setType(Material.COBBLESTONE);
+                center.clone().add(xOffset, 0, zOffset).getBlock().setType(Material.COBBLESTONE);
             }
         }
 
-        owner.teleport(center.add(0, 1, 0));
+        owner.teleport(center.clone().add(0, 1, 0));
     }
 }
