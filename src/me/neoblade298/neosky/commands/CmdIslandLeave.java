@@ -21,7 +21,7 @@ public class CmdIslandLeave extends Subcommand {
         UUID uuid = player.getUniqueId();
 
         Island island = IslandManager.getIslandByMember(uuid);
-        if(island.getOwnerUUID() != uuid) {
+        if(island.getOwner() != uuid) {
             island.removeMember(uuid);
         }
     }

@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neosky.commands.CmdIslandDebug;
 import me.neoblade298.neosky.commands.CmdIslandDelete;
 import me.neoblade298.neosky.commands.CmdIslandJoin;
 import me.neoblade298.neosky.commands.CmdIslandLeave;
@@ -23,12 +24,14 @@ public class NeoSky extends JavaPlugin {
 
         createWorld();
 
+        // todo: perms
         SubcommandManager mgr = new SubcommandManager("island", null, NamedTextColor.AQUA, this);
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
-        mgr.register(new CmdIslandDelete("delete", "Delete your island (owner only)", null, SubcommandRunner.PLAYER_ONLY)); // TODO: perm
+        mgr.register(new CmdIslandDelete("delete", "Delete your island (owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandJoin("join", "Join an existing island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandLeave("leave", "Leave your island (non-owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandSpawn("spawn", "Teleport to your island", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
     }
 
     public void onDisable() {
