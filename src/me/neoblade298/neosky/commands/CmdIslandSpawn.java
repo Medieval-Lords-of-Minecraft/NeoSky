@@ -17,6 +17,7 @@ public class CmdIslandSpawn extends Subcommand {
     public void run(CommandSender arg0, String[] arg1) {
         Player player = (Player)arg0;
         Island island = IslandManager.getIslandByMember(player.getUniqueId());
+        // Change to be custom spawn.
         if(island != null) player.teleport(island.getCenter());
     }
 
