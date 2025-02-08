@@ -8,8 +8,8 @@ import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
 
-public class CmdIslandSpawn extends Subcommand {
-    public CmdIslandSpawn(String key, String desc, String perm, SubcommandRunner runner) {
+public class CmdIslandSetSpawn extends Subcommand {
+    public CmdIslandSetSpawn(String key, String desc, String perm, SubcommandRunner runner) {
         super(key, desc, perm, runner);
     }
 
@@ -17,8 +17,11 @@ public class CmdIslandSpawn extends Subcommand {
     public void run(CommandSender arg0, String[] arg1) {
         Player player = (Player)arg0;
         Island island = IslandManager.getIslandByMember(player.getUniqueId());
-
-        if(island != null) player.teleport(island.getSpawn());
+        
+        if(island != null) {
+            // TODO: Make sure spawn is set within the bounds of the island
+            island.setSpawn(player);
+            player.sendMessage("Set island spawn!");
+        }
     }
-
 }

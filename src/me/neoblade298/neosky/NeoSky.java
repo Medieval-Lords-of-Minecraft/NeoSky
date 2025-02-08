@@ -9,12 +9,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neosky.commands.CmdIslandBan;
 import me.neoblade298.neosky.commands.CmdIslandDebug;
 import me.neoblade298.neosky.commands.CmdIslandDelete;
 import me.neoblade298.neosky.commands.CmdIslandJoin;
 import me.neoblade298.neosky.commands.CmdIslandLeave;
 import me.neoblade298.neosky.commands.CmdIslandNew;
 import me.neoblade298.neosky.commands.CmdIslandSpawn;
+import me.neoblade298.neosky.commands.CmdIslandUnban;
+import me.neoblade298.neosky.commands.CmdIslandVisit;
+import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class NeoSky extends JavaPlugin {
@@ -31,6 +35,10 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandJoin("join", "Join an existing island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandLeave("leave", "Leave your island (non-owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandSpawn("spawn", "Teleport to your island", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandSetSpawn("setspawn", "Set your island spawn", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandVisit("visit", "Visit someone's island", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandBan("ban", "Ban player from your island", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandUnban("unban", "Unban player from your island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
     }
 

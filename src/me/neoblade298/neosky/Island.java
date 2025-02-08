@@ -16,6 +16,7 @@ public class Island {
 
     private int index;
     private Location center;
+    private Location spawn;
 
     private UUID owner;
     private List<UUID> members = new ArrayList<UUID>();
@@ -23,6 +24,7 @@ public class Island {
 
     public Island(Player owner, int index) {
         this.owner = owner.getUniqueId();
+        this.members.add(this.owner);
         center = indexToLocation(index);
 
         for(int xOffset = -1; xOffset < 1; xOffset++) {
@@ -32,8 +34,9 @@ public class Island {
         }
 
         center.add(0, 1, 0);
+        spawn = center;
 
-        owner.teleport(center);
+        owner.teleport(spawn);
     }
 
     public int getIndex() {
@@ -44,8 +47,22 @@ public class Island {
         return owner;
     }
 
+    public boolean isOwner(Player player) {
+        return player.getUniqueId() == owner ? true : false;
+    }
+
     public Location getCenter() {
         return center.clone();
+    }
+
+    public Location getSpawn()
+    {
+        return spawn.clone();
+    }
+
+    public void setSpawn(Player player)
+    {
+        spawn = player.getLocation();
     }
 
     public void addMember(Player player) {
@@ -63,6 +80,11 @@ public class Island {
         }
 
         return false;
+    }
+
+    public boolean isBanned(Player player)
+    {
+        return bannedPlayers.contains(player.getUniqueId()) ? true : false;
     }
 
     public void addBan(UUID player) {
