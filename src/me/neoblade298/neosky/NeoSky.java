@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neosky.commands.CmdIsland;
 import me.neoblade298.neosky.commands.CmdIslandBan;
 import me.neoblade298.neosky.commands.CmdIslandDebug;
 import me.neoblade298.neosky.commands.CmdIslandDelete;
@@ -30,6 +31,7 @@ public class NeoSky extends JavaPlugin {
 
         // todo: perms
         SubcommandManager mgr = new SubcommandManager("island", null, NamedTextColor.AQUA, this);
+        mgr.register(new CmdIsland("island", "Views your island menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDelete("delete", "Delete your island (owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandJoin("join", "Join an existing island", null, SubcommandRunner.PLAYER_ONLY));
