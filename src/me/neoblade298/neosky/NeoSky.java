@@ -31,7 +31,7 @@ public class NeoSky extends JavaPlugin {
 
         // todo: perms
         SubcommandManager mgr = new SubcommandManager("island", null, NamedTextColor.AQUA, this);
-        mgr.register(new CmdIsland("island", "Views your island menu", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIsland("", "Views your island menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDelete("delete", "Delete your island (owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandJoin("join", "Join an existing island", null, SubcommandRunner.PLAYER_ONLY));

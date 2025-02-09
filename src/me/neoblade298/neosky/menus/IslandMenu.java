@@ -10,13 +10,14 @@ import org.bukkit.inventory.ItemStack;
 
 import me.neoblade298.neocore.bukkit.inventories.CoreInventory;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class IslandMenu extends CoreInventory {
 
     public IslandMenu(Player player) {
         super(
             player, 
-            Bukkit.createInventory(player, 36, "§2Island Menu")
+            Bukkit.createInventory(player, 36, Component.text("Island", NamedTextColor.BLUE))
 		);
 
         ItemStack[] contents = inv.getContents();

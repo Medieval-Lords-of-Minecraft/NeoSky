@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
@@ -26,10 +27,10 @@ public class CmdIslandUnban extends Subcommand {
         if(island.isOwner(player) && offender != null) {
             if(island.isBanned(offender)) {
                 island.removeBan(offender.getUniqueId());
-                player.sendMessage("Player has been unbanned from your island.");
+                Util.msg(player, "Player has been unbanned from your island.");
             }
             else {
-                player.sendMessage("Player is not banned from your island.");
+                Util.msg(offender, "Player is not banned from your island.");
             }
         }
     }
