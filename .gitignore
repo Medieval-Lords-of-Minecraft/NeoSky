@@ -1,6 +1,6 @@
-NeoSky.jar
-
 bin/
+target/
+
 .classpath
 .project
 .settings
