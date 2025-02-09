@@ -24,10 +24,10 @@ public class IslandManager {
     }
 
     public static void restrictPlayersToIslands() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            Island island = SkyPlayerManager.getSkyPlayer(player.getUniqueId()).getLocalIsland();
-            if(island != null && !island.containsLocation(player.getLocation())) {
-                island.spawnPlayer(player);
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            Island island = SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getLocalIsland();
+            if(island != null && !island.containsLocation(p.getLocation())) {
+                island.spawnPlayer(p);
             }
         }
     }

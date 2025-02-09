@@ -53,8 +53,8 @@ public class Island {
         return owner;
     }
 
-    public boolean isOwner(SkyPlayer player) {
-        return player == owner;
+    public boolean isOwner(SkyPlayer sp) {
+        return sp == owner;
     }
 
     public Location getCenter() {
@@ -80,30 +80,30 @@ public class Island {
         localPlayers.remove(sp);
     }
 
-    public void addMember(SkyPlayer player) {
-        members.add(player);
+    public void addMember(SkyPlayer sp) {
+        members.add(sp);
     }
 
     public void removeMember(SkyPlayer member) {
         members.remove(member);
     }
 
-    public boolean hasMember(SkyPlayer player) {
-        return members.contains(player);
+    public boolean hasMember(SkyPlayer sp) {
+        return members.contains(sp);
     }
 
-    public boolean isBanned(SkyPlayer player) {
-        return bannedPlayers.contains(player);
+    public boolean isBanned(SkyPlayer sp) {
+        return bannedPlayers.contains(sp);
     }
 
-    public void addBan(SkyPlayer player) {
-        bannedPlayers.add(player);
+    public void addBan(SkyPlayer sp) {
+        bannedPlayers.add(sp);
 
         // TODO: if player online and on island, tp them out
     }
 
-    public void removeBan(SkyPlayer player) {
-        bannedPlayers.remove(player);
+    public void removeBan(SkyPlayer sp) {
+        bannedPlayers.remove(sp);
     }
 
     public void cleanup() {
