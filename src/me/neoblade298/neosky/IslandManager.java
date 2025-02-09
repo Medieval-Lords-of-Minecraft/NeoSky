@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class IslandManager {
@@ -22,8 +23,8 @@ public class IslandManager {
 
     public static void deleteIsland(int index) {
         // TODO: teleport everyone away
-        // todo: cleanup+delete physical island
-        // todo: remove from memory
+        // TODO: cleanup+delete physical island
+        // TODO: remove from memory
     }
 
     // TODO: optimize later
@@ -35,5 +36,14 @@ public class IslandManager {
         }
 
         return island;
+    }
+
+    public static void restrictPlayersToIslands() {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            Island island = SkyPlayerManager.getSkyPlayer(player.getUniqueId()).getLocalIsland();
+            if(island != null && !island.containsLocation(player.getLocation())) {
+                island.spawnPlayer(player);
+            }
+        }
     }
 }

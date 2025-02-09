@@ -21,11 +21,10 @@ public class CmdIslandVisit extends Subcommand {
         Player visitor = (Player)arg0;
         Player visitee = Bukkit.getPlayer(arg1[0]);
 
-        if(visitee != null)
-        {
+        if(visitee != null) {
             Island island = IslandManager.getIslandByMember(visitee.getUniqueId());
 
-            if(island != null && !island.isBanned(visitor)) visitor.teleport(island.getSpawn());
+            if(island != null && !island.isBanned(visitor)) island.spawnPlayer(visitor);
         }
     }
 }

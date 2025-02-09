@@ -22,6 +22,8 @@ public class Island {
     private List<UUID> members = new ArrayList<UUID>();
     private List<UUID> bannedPlayers = new ArrayList<UUID>();
 
+    private int radius;
+
     public Island(Player owner, int index) {
         this.owner = owner.getUniqueId();
         this.members.add(this.owner);
@@ -33,10 +35,13 @@ public class Island {
             }
         }
 
-        center.add(0, 1, 0);
-        spawn = center;
+        spawn = center.clone();
+        spawn.add(0, 1, 0);
+
+        radius = 10; // TODO: load from config
 
         owner.teleport(spawn);
+        SkyPlayerManager.getSkyPlayer(owner.getUniqueId()).setMemberIsland(this);
     }
 
     public int getIndex() {
@@ -55,14 +60,17 @@ public class Island {
         return center.clone();
     }
 
-    public Location getSpawn()
-    {
+    public Location getSpawn() {
         return spawn.clone();
     }
 
-    public void setSpawn(Player player)
-    {
+    public void setSpawn(Player player) {
         spawn = player.getLocation();
+    }
+
+    public void spawnPlayer(Player player) {
+        player.teleport(spawn);
+        SkyPlayerManager.getSkyPlayer(player.getUniqueId()).setLocalIsland(this);
     }
 
     public void addMember(Player player) {
@@ -82,19 +90,26 @@ public class Island {
         return false;
     }
 
-    public boolean isBanned(Player player)
-    {
+    public boolean isBanned(Player player) {
         return bannedPlayers.contains(player.getUniqueId()) ? true : false;
     }
 
     public void addBan(UUID player) {
         bannedPlayers.add(player);
 
-        // todo: if player online and on island, tp them out
+        // TODO: if player online and on island, tp them out
     }
 
     public void removeBan(UUID player) {
         bannedPlayers.remove(player);
+    }
+
+    // TODO: verify these don't need an extra half or full block on any side
+    public boolean containsLocation(Location loc) {
+        return loc.getX() < center.getX() + radius + 1 &&
+            loc.getX() > center.getX() - radius - 1 &&
+            loc.getZ() < center.getZ() + radius + 1 &&
+            loc.getZ() > center.getZ() - radius - 1;
     }
 
     public static Location indexToLocation(int index) {

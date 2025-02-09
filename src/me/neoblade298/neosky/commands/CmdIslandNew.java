@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
 
 public class CmdIslandNew extends Subcommand {
@@ -19,6 +20,7 @@ public class CmdIslandNew extends Subcommand {
         // can't make island if you're in one
         if(IslandManager.getIslandByMember(player.getUniqueId()) != null) return; 
 
-        IslandManager.createIsland(player);
+        Island island = IslandManager.createIsland(player);
+        island.spawnPlayer(player);
     }
 }

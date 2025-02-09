@@ -18,7 +18,7 @@ public class CmdIslandSpawn extends Subcommand {
         Player player = (Player)arg0;
         Island island = IslandManager.getIslandByMember(player.getUniqueId());
 
-        if(island != null) player.teleport(island.getSpawn());
+        if(island != null) island.spawnPlayer(player);
     }
 
 }

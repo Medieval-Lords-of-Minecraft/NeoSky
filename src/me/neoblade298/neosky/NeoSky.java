@@ -6,6 +6,7 @@ import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
@@ -29,7 +30,7 @@ public class NeoSky extends JavaPlugin {
 
         createWorld();
 
-        // todo: perms
+        // TODO: perms
         SubcommandManager mgr = new SubcommandManager("island", null, NamedTextColor.AQUA, this);
         mgr.register(new CmdIsland("", "Views your island menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
@@ -42,6 +43,15 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandBan("ban", "Ban player from your island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandUnban("unban", "Unban player from your island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
+
+        Bukkit.getPluginManager().registerEvents(new IslandListener(), this);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                IslandManager.restrictPlayersToIslands();
+            }
+        }.runTaskTimer(this, 0, 50);
     }
 
     public void onDisable() {
