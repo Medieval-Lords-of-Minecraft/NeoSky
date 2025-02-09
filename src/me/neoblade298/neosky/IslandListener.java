@@ -1,5 +1,6 @@
 package me.neoblade298.neosky;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -7,26 +8,38 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import me.neoblade298.neocore.bukkit.util.Util;
+
 public class IslandListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        SkyPlayer player = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
+        if(sp.getLocalIsland() == null) {
+            Util.msg(e.getPlayer(), "Your island was deleted while you were offline.");
+            // TODO: teleport to spawn
+        }
 
-        // TODO: teleport away if banned while offline
+        if(sp.getLocalIsland().isBanned(sp)) {
+            Util.msg(e.getPlayer(), "You were banned from an island while you were offline.");
+            // TODO: teleport to spawn
+        }
     }
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        // todo: respawn player on current island (not necessarily their own)
+        // TODO: respawn player on current island (not necessarily their own)
     }
 
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        // todo: disallow tp from is-banned players, also ensure safety (e.g. from lava)
+        Player p = e.getPlayer();
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
+        sp.getLocalIsland().removeLocalPlayer(sp);
+        sp.setLocalIsland(null);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
-        // todo: all breaking, placing, using, etc.
+        // TODO: all breaking, placing, using, etc.
     }
 }

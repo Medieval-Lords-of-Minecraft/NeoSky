@@ -8,7 +8,8 @@ import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
-import me.neoblade298.neosky.IslandManager;
+import me.neoblade298.neosky.SkyPlayer;
+import me.neoblade298.neosky.SkyPlayerManager;
 
 public class CmdIslandVisit extends Subcommand {
     public CmdIslandVisit(String key, String desc, String perm, SubcommandRunner runner) {
@@ -19,12 +20,14 @@ public class CmdIslandVisit extends Subcommand {
     @Override
     public void run(CommandSender arg0, String[] arg1) {
         Player visitor = (Player)arg0;
+        SkyPlayer skyVisitor = SkyPlayerManager.getSkyPlayer(visitor.getUniqueId());
         Player visitee = Bukkit.getPlayer(arg1[0]);
+        SkyPlayer skyVisitee = SkyPlayerManager.getSkyPlayer(visitee.getUniqueId());
 
         if(visitee != null) {
-            Island island = IslandManager.getIslandByMember(visitee.getUniqueId());
+            Island island = skyVisitee.getMemberIsland();
 
-            if(island != null && !island.isBanned(visitor)) island.spawnPlayer(visitor);
+            if(island != null && !island.isBanned(skyVisitor)) island.spawnPlayer(visitor); // TODO: error msgs
         }
     }
 }

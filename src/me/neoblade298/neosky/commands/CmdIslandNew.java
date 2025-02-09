@@ -4,9 +4,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
+import me.neoblade298.neosky.SkyPlayer;
+import me.neoblade298.neosky.SkyPlayerManager;
 
 public class CmdIslandNew extends Subcommand {
     public CmdIslandNew(String key, String desc, String perm, SubcommandRunner runner) {
@@ -15,12 +18,16 @@ public class CmdIslandNew extends Subcommand {
 
     @Override
     public void run(CommandSender arg0, String[] arg1) {
-        Player player = (Player)arg0;
+        Player p = (Player)arg0;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
         // can't make island if you're in one
-        if(IslandManager.getIslandByMember(player.getUniqueId()) != null) return; 
+        if(sp.getMemberIsland() != null) {
+            Util.msg(p, "You already have an island.");
+            return;
+        }
 
-        Island island = IslandManager.createIsland(player);
-        island.spawnPlayer(player);
+        Island island = IslandManager.createIsland(sp);
+        island.spawnPlayer(p);
     }
 }

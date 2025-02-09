@@ -9,7 +9,8 @@ import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.Arg;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
-import me.neoblade298.neosky.IslandManager;
+import me.neoblade298.neosky.SkyPlayer;
+import me.neoblade298.neosky.SkyPlayerManager;
 
 public class CmdIslandBan extends Subcommand {
     public CmdIslandBan(String key, String desc, String perm, SubcommandRunner runner) {
@@ -20,16 +21,23 @@ public class CmdIslandBan extends Subcommand {
     @Override
     public void run(CommandSender arg0, String[] arg1) {
         Player player = (Player)arg0;
+        SkyPlayer skyPlayer = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
+
         Player offender = Bukkit.getPlayer(arg1[0]);
+        if(offender == null) {
+            Util.msg(player, "Player not found.");
+            return;
+        }
 
-        Island island = IslandManager.getIslandByMember(player.getUniqueId());
+        SkyPlayer skyOffender = SkyPlayerManager.getSkyPlayer(offender.getUniqueId());
 
-        if(island.isOwner(player) && offender != null) {
-            if(island.isBanned(offender)) {
+        Island island = skyPlayer.getMemberIsland();
+
+        if(island.isOwner(skyPlayer)) { // TODO: remove this check once perms are in
+            if(island.isBanned(skyOffender)) {
                 Util.msg(player, "Player is already banned from your island.");
-            }
-            else {
-                island.addBan(offender.getUniqueId());
+            } else {
+                island.addBan(skyOffender);
                 Util.msg(player, "Player has been banned from your island.");
             }
         }

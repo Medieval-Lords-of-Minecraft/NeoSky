@@ -18,15 +18,16 @@ public class Island {
     private Location center;
     private Location spawn;
 
-    private UUID owner;
-    private List<UUID> members = new ArrayList<UUID>();
-    private List<UUID> bannedPlayers = new ArrayList<UUID>();
+    private SkyPlayer owner;
+    private List<SkyPlayer> members = new ArrayList<SkyPlayer>();
+    private List<SkyPlayer> bannedPlayers = new ArrayList<SkyPlayer>();
+    private List<SkyPlayer> localPlayers = new ArrayList<SkyPlayer>();
 
     private int radius;
 
-    public Island(Player owner, int index) {
-        this.owner = owner.getUniqueId();
-        this.members.add(this.owner);
+    public Island(SkyPlayer owner, int index) {
+        this.owner = owner;
+        this.members.add(owner);
         center = indexToLocation(index);
 
         for(int xOffset = -1; xOffset < 1; xOffset++) {
@@ -40,20 +41,19 @@ public class Island {
 
         radius = 10; // TODO: load from config
 
-        owner.teleport(spawn);
-        SkyPlayerManager.getSkyPlayer(owner.getUniqueId()).setMemberIsland(this);
+        owner.setMemberIsland(this);
     }
 
     public int getIndex() {
         return index;
     }
 
-    public UUID getOwner() {
+    public SkyPlayer getOwner() {
         return owner;
     }
 
-    public boolean isOwner(Player player) {
-        return player.getUniqueId() == owner ? true : false;
+    public boolean isOwner(SkyPlayer player) {
+        return player == owner;
     }
 
     public Location getCenter() {
@@ -70,41 +70,41 @@ public class Island {
 
     public void spawnPlayer(Player player) {
         player.teleport(spawn);
-        SkyPlayerManager.getSkyPlayer(player.getUniqueId()).setLocalIsland(this);
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
+        sp.setLocalIsland(this);
+        localPlayers.add(sp);
     }
 
-    public void addMember(Player player) {
-        members.add(player.getUniqueId());
-        player.teleport(center);
+    public void removeLocalPlayer(SkyPlayer sp) {
+        localPlayers.remove(sp);
     }
 
-    public void removeMember(UUID member) {
+    public void addMember(SkyPlayer player) {
+        members.add(player);
+    }
+
+    public void removeMember(SkyPlayer member) {
         members.remove(member);
     }
 
-    public boolean hasMember(UUID player) {
-        for(UUID member : members) {
-            if(player == member) return true;
-        }
-
-        return false;
+    public boolean hasMember(SkyPlayer player) {
+        return members.contains(player);
     }
 
-    public boolean isBanned(Player player) {
-        return bannedPlayers.contains(player.getUniqueId()) ? true : false;
+    public boolean isBanned(SkyPlayer player) {
+        return bannedPlayers.contains(player);
     }
 
-    public void addBan(UUID player) {
+    public void addBan(SkyPlayer player) {
         bannedPlayers.add(player);
 
         // TODO: if player online and on island, tp them out
     }
 
-    public void removeBan(UUID player) {
+    public void removeBan(SkyPlayer player) {
         bannedPlayers.remove(player);
     }
 
-    // TODO: verify these don't need an extra half or full block on any side
     public boolean containsLocation(Location loc) {
         return loc.getX() < center.getX() + radius + 1 &&
             loc.getX() > center.getX() - radius - 1 &&

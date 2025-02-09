@@ -6,7 +6,8 @@ import org.bukkit.entity.Player;
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
-import me.neoblade298.neosky.IslandManager;
+import me.neoblade298.neosky.SkyPlayer;
+import me.neoblade298.neosky.SkyPlayerManager;
 
 public class CmdIslandSpawn extends Subcommand {
     public CmdIslandSpawn(String key, String desc, String perm, SubcommandRunner runner) {
@@ -16,9 +17,11 @@ public class CmdIslandSpawn extends Subcommand {
     @Override
     public void run(CommandSender arg0, String[] arg1) {
         Player player = (Player)arg0;
-        Island island = IslandManager.getIslandByMember(player.getUniqueId());
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
 
-        if(island != null) island.spawnPlayer(player);
+        Island island = sp.getMemberIsland();
+
+        if(island != null) island.spawnPlayer(player); // TODO: error msg
     }
 
 }

@@ -1,14 +1,13 @@
 package me.neoblade298.neosky.commands;
 
-import java.util.UUID;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
-import me.neoblade298.neosky.IslandManager;
+import me.neoblade298.neosky.SkyPlayer;
+import me.neoblade298.neosky.SkyPlayerManager;
 
 public class CmdIslandLeave extends Subcommand {
     public CmdIslandLeave(String key, String desc, String perm, SubcommandRunner runner) {
@@ -18,11 +17,11 @@ public class CmdIslandLeave extends Subcommand {
     @Override
     public void run(CommandSender arg0, String[] arg1) {
         Player player = (Player)arg0;
-        UUID uuid = player.getUniqueId();
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
 
-        Island island = IslandManager.getIslandByMember(uuid);
-        if(island.getOwner() != uuid) {
-            island.removeMember(uuid);
+        Island island = sp.getMemberIsland();
+        if(!island.isOwner(sp)) {
+            island.removeMember(sp);
         }
     }
 
