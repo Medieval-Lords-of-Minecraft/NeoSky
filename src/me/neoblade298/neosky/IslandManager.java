@@ -17,13 +17,10 @@ public class IslandManager {
     }
 
     public static void deleteIsland(Island island) {
-        deleteIsland(island.getIndex());
-    }
-
-    public static void deleteIsland(int index) {
         // TODO: teleport everyone away
-        // TODO: cleanup+delete physical island
-        // TODO: remove from memory
+        
+        islands.remove(island);
+        island.cleanup();
     }
 
     public static void restrictPlayersToIslands() {

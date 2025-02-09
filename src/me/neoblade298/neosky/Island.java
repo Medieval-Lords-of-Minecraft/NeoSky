@@ -6,6 +6,8 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class Island {
@@ -102,6 +104,22 @@ public class Island {
 
     public void removeBan(SkyPlayer player) {
         bannedPlayers.remove(player);
+    }
+
+    public void cleanup() {
+        for(int x = center.getBlockX() - radius - 1; x <= center.getBlockX() + radius + 1; x++) {
+            for(int z = center.getBlockZ() - radius - 1; z <= center.getBlockZ() + radius + 1; z++) {
+                for(int y = center.getWorld().getMinHeight(); y <= center.getWorld().getMaxHeight(); y++) {
+                    center.getWorld().getBlockAt(x, y, z).setType(Material.AIR);
+                }
+            }
+        }
+
+        for(Entity e : center.getNearbyEntities(radius, center.getWorld().getMaxHeight(), radius)) {
+            if(e.getType() != EntityType.PLAYER) e.remove();
+        }
+
+        // TODO: cleanup custom/special stuff
     }
 
     public boolean containsLocation(Location loc) {
