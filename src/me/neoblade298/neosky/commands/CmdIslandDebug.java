@@ -14,8 +14,8 @@ public class CmdIslandDebug extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Bukkit.getServer().broadcastMessage(Island.locationToIndex(((Player)arg0).getLocation()) + "");
+    public void run(CommandSender sender, String[] args) {
+        Bukkit.getServer().broadcastMessage(Island.locationToIndex(((Player)sender).getLocation()) + "");
     }
 
 }

@@ -17,8 +17,8 @@ public class CmdIslandNew extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player p = (Player)arg0;
+    public void run(CommandSender sender, String[] args) {
+        Player p = (Player)sender;
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
         // can't make island if you're in one

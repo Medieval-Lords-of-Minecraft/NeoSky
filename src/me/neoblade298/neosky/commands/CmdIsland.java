@@ -13,9 +13,9 @@ public class CmdIsland extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player player = (Player)arg0;
-        new IslandMenu(player);
+    public void run(CommandSender sender, String[] args) {
+        Player p = (Player)sender;
+        new IslandMenu(p);
     }
 
 }

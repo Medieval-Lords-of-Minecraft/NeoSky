@@ -19,13 +19,13 @@ public class CmdIslandUnban extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player player = (Player)arg0;
-        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
+    public void run(CommandSender sender, String[] args) {
+        Player p = (Player)sender;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
-        Player offender = Bukkit.getPlayer(arg1[0]);
+        Player offender = Bukkit.getPlayer(args[0]);
         if(offender == null) {
-            Util.msg(player, "Player not found.");
+            Util.msg(p, "Player not found.");
             return;
         }
         SkyPlayer skyOffender = SkyPlayerManager.getSkyPlayer(offender.getUniqueId());
@@ -35,9 +35,9 @@ public class CmdIslandUnban extends Subcommand {
         if(island.isOwner(sp)) { // TODO: remove this check once perms are in
             if(island.isBanned(skyOffender)) {
                 island.removeBan(skyOffender);
-                Util.msg(player, "Player has been unbanned from your island.");
+                Util.msg(p, "Player has been unbanned from your island.");
             } else {
-                Util.msg(player, "Player is not banned from your island.");
+                Util.msg(p, "Player is not banned from your island.");
             }
         }
     }

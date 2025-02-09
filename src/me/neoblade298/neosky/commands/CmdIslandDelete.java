@@ -16,9 +16,9 @@ public class CmdIslandDelete extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player player = (Player)arg0;
-        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
+    public void run(CommandSender sender, String[] args) {
+        Player p = (Player)sender;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
         Island island = sp.getMemberIsland();
         if(island == null || !island.isOwner(sp)) return; // TODO: error msgs

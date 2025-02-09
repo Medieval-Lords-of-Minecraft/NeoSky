@@ -20,11 +20,11 @@ public class CmdIslandJoin extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player joiner = (Player)arg0;
+    public void run(CommandSender sender, String[] args) {
+        Player joiner = (Player)sender;
         SkyPlayer skyJoiner = SkyPlayerManager.getSkyPlayer(joiner.getUniqueId());
         
-        Player joinee = Bukkit.getPlayer(arg1[0]);
+        Player joinee = Bukkit.getPlayer(args[0]);
         if(joinee == null) {
             Util.msg(joiner, "Player not found.");
             return;

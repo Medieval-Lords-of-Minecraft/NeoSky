@@ -18,10 +18,10 @@ public class CmdIslandVisit extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player visitor = (Player)arg0;
+    public void run(CommandSender sender, String[] args) {
+        Player visitor = (Player)sender;
         SkyPlayer skyVisitor = SkyPlayerManager.getSkyPlayer(visitor.getUniqueId());
-        Player visitee = Bukkit.getPlayer(arg1[0]);
+        Player visitee = Bukkit.getPlayer(args[0]);
         SkyPlayer skyVisitee = SkyPlayerManager.getSkyPlayer(visitee.getUniqueId());
 
         if(visitee != null) {

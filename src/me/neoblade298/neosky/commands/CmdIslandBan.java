@@ -19,26 +19,26 @@ public class CmdIslandBan extends Subcommand {
     }
 
     @Override
-    public void run(CommandSender arg0, String[] arg1) {
-        Player player = (Player)arg0;
-        SkyPlayer skyPlayer = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
+    public void run(CommandSender sender, String[] args) {
+        Player p = (Player)sender;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
-        Player offender = Bukkit.getPlayer(arg1[0]);
+        Player offender = Bukkit.getPlayer(args[0]);
         if(offender == null) {
-            Util.msg(player, "Player not found.");
+            Util.msg(p, "Player not found.");
             return;
         }
 
         SkyPlayer skyOffender = SkyPlayerManager.getSkyPlayer(offender.getUniqueId());
 
-        Island island = skyPlayer.getMemberIsland();
+        Island island = sp.getMemberIsland();
 
-        if(island.isOwner(skyPlayer)) { // TODO: remove this check once perms are in
+        if(island.isOwner(sp)) { // TODO: remove this check once perms are in
             if(island.isBanned(skyOffender)) {
-                Util.msg(player, "Player is already banned from your island.");
+                Util.msg(p, "Player is already banned from your island.");
             } else {
                 island.addBan(skyOffender);
-                Util.msg(player, "Player has been banned from your island.");
+                Util.msg(p, "Player has been banned from your island.");
             }
         }
     }
