@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton.SkeletonType;
 
 public class Island {
     private static final int MAX_ISLAND_RADIUS = 1; // chunks
@@ -98,9 +97,14 @@ public class Island {
     }
 
     public void addBan(SkyPlayer sp) {
+        
         bannedPlayers.add(sp);
 
-        // TODO: if player online and on island, tp them out
+        Player bp = Bukkit.getPlayer(sp.getUUID());
+
+        if(sp.getLocalIsland() == this && bp != null && bp.isOnline()) {
+            bp.teleport(bp.getWorld().getSpawnLocation());
+        }
     }
 
     public void removeBan(SkyPlayer sp) {
