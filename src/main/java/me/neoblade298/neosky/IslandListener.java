@@ -14,14 +14,7 @@ public class IslandListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
-        if(sp.getLocalIsland() == null) {
-            Util.msg(e.getPlayer(), "Your island was deleted while you were offline.");
-            // TODO: teleport to spawn
-
-            return;
-        }
-
-        if(sp.getLocalIsland().isBanned(sp)) {
+        if(sp.getLocalIsland() != null && sp.getLocalIsland().isBanned(sp)) {
             Util.msg(e.getPlayer(), "You were banned from an island while you were offline.");
             // TODO: teleport to spawn
         }
@@ -42,6 +35,16 @@ public class IslandListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
+        Island is = sp.getLocalIsland();
+
+        if(is == null) return;
+
+        if(!is.containsLocation(e.getInteractionPoint(), 0)) {
+            e.setCancelled(true);
+            return;
+        }
+
         // TODO: all breaking, placing, using, etc.
     }
 }
