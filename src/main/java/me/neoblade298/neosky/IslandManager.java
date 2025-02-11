@@ -24,7 +24,7 @@ public class IslandManager {
     public static void restrictPlayersToIslands() {
         for(Player p : Bukkit.getOnlinePlayers()) {
             Island island = SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getLocalIsland();
-            if(island != null && !island.containsLocation(p.getLocation())) {
+            if(island != null && !island.containsLocation(p.getLocation(), 1)) {
                 island.spawnPlayer(p);
             }
         }

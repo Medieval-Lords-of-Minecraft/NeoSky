@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Skeleton.SkeletonType;
 
 public class Island {
     private static final int MAX_ISLAND_RADIUS = 1; // chunks
@@ -21,9 +20,17 @@ public class Island {
     private Location spawn;
 
     private SkyPlayer owner;
+    private List<SkyPlayer> officers = new ArrayList<SkyPlayer>();
     private List<SkyPlayer> members = new ArrayList<SkyPlayer>();
+    private List<SkyPlayer> trustedPlayers = new ArrayList<SkyPlayer>();
     private List<SkyPlayer> bannedPlayers = new ArrayList<SkyPlayer>();
+
     private List<SkyPlayer> localPlayers = new ArrayList<SkyPlayer>();
+
+    private IslandPermissions officerPerms = new IslandPermissions();
+    private IslandPermissions memberPerms = new IslandPermissions();
+    private IslandPermissions trustedPerms = new IslandPermissions();
+    private IslandPermissions visitorPerms = new IslandPermissions();
 
     private int radius;
 
@@ -43,7 +50,44 @@ public class Island {
 
         radius = 10; // TODO: load from config
 
+        loadPerms();
+
         owner.setMemberIsland(this);
+    }
+
+    // TODO: load default perms from config
+    private void loadPerms() {
+        officerPerms.canInteract = true;
+        officerPerms.canBuild = true;
+        officerPerms.canUseDoors = true;
+        officerPerms.canOpenChests = true;
+        officerPerms.canDropItems = true;
+        officerPerms.canPickupItems = true;
+        officerPerms.canKillMobs = true;
+
+        memberPerms.canInteract = true;
+        memberPerms.canBuild = true;
+        memberPerms.canUseDoors = true;
+        memberPerms.canOpenChests = true;
+        memberPerms.canDropItems = true;
+        memberPerms.canPickupItems = true;
+        memberPerms.canKillMobs = true;
+
+        trustedPerms.canInteract = true;
+        trustedPerms.canBuild = false;
+        trustedPerms.canUseDoors = true;
+        trustedPerms.canOpenChests = false;
+        trustedPerms.canDropItems = true;
+        trustedPerms.canPickupItems = true;
+        trustedPerms.canKillMobs = true;
+
+        visitorPerms.canInteract = false;
+        visitorPerms.canBuild = false;
+        visitorPerms.canUseDoors = false;
+        visitorPerms.canOpenChests = false;
+        visitorPerms.canDropItems = false;
+        visitorPerms.canPickupItems = false;
+        visitorPerms.canKillMobs = false;
     }
 
     public int getIndex() {
@@ -82,35 +126,67 @@ public class Island {
     }
 
     public void addMember(SkyPlayer sp) {
-        members.add(sp);
+        if(!isBanned(sp)) {
+            members.add(sp);
+            sp.setMemberIsland(this);
+        }
     }
 
-    public void removeMember(SkyPlayer member) {
-        members.remove(member);
+    public void removeMember(SkyPlayer sp) {
+        if(sp != owner) {
+            members.remove(sp);
+            officers.remove(sp);
+        }
     }
 
-    public boolean hasMember(SkyPlayer sp) {
+    public boolean isMember(SkyPlayer sp) {
         return members.contains(sp);
     }
 
-    public boolean isBanned(SkyPlayer sp) {
-        return bannedPlayers.contains(sp);
+    public void addOfficer(SkyPlayer sp) {
+        if(members.contains(sp)) officers.add(sp);
+    }
+
+    public void removeOfficer(SkyPlayer sp) {
+        officers.remove(sp);
+    }
+
+    public boolean isOfficer(SkyPlayer sp) {
+        return officers.contains(sp);
+    }
+
+    public void addTrusted(SkyPlayer sp) {
+        trustedPlayers.add(sp);
+    }
+
+    public void removeTrusted(SkyPlayer sp) {
+        trustedPlayers.remove(sp);
+    }
+
+    public boolean isTrusted(SkyPlayer sp) {
+        return trustedPlayers.contains(sp);
     }
 
     public void addBan(SkyPlayer sp) {
-        bannedPlayers.add(sp);
-
-        // TODO: if player online and on island, tp them out
+        if(!isMember(sp)) {
+            bannedPlayers.add(sp);
+            // TODO: if player online and on island, tp them out
+        }
     }
 
     public void removeBan(SkyPlayer sp) {
         bannedPlayers.remove(sp);
     }
 
+    public boolean isBanned(SkyPlayer sp) {
+        return bannedPlayers.contains(sp);
+    }
+
     public void cleanup() {
         for(SkyPlayer sp : localPlayers) {
-            // TODO: teleport away
-            sp.setLocalIsland(null);
+            // TODO: teleport away + notify
+            // TODO: queue for offline players
+            sp.setLocalIsland(null); // temp
         }
 
         for(int x = center.getBlockX() - radius - 1; x <= center.getBlockX() + radius + 1; x++) {
@@ -128,11 +204,12 @@ public class Island {
         // TODO: cleanup custom/special stuff
     }
 
-    public boolean containsLocation(Location loc) {
-        return loc.getX() < center.getX() + radius + 1 &&
-            loc.getX() > center.getX() - radius - 1 &&
-            loc.getZ() < center.getZ() + radius + 1 &&
-            loc.getZ() > center.getZ() - radius - 1;
+    // threshold denotes extra room at the edge
+    public boolean containsLocation(Location loc, int threshold) {
+        return loc.getX() < center.getX() + radius + threshold &&
+            loc.getX() > center.getX() - radius - threshold &&
+            loc.getZ() < center.getZ() + radius + threshold &&
+            loc.getZ() > center.getZ() - radius - threshold;
     }
 
     public static Location indexToLocation(int index) {
