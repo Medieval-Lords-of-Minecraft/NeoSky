@@ -1,5 +1,6 @@
 package me.neoblade298.neosky;
 
+// TODO: managerial perms (e.g. trusting)
 public class IslandPermissions {
     public boolean canInteract;
     public boolean canBuild;

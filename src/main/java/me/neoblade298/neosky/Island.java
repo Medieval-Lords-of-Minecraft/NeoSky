@@ -90,6 +90,14 @@ public class Island {
         visitorPerms.canKillMobs = false;
     }
 
+    public IslandPermissions getHighestPermission(SkyPlayer sp) {
+        if(sp == owner) return officerPerms;
+        if(isOfficer(sp)) return officerPerms;
+        if(isMember(sp)) return memberPerms;
+        if(isTrusted(sp)) return trustedPerms;
+        return visitorPerms;
+    }
+
     public int getIndex() {
         return index;
     }
@@ -209,7 +217,8 @@ public class Island {
         return loc.getX() < center.getX() + radius + threshold &&
             loc.getX() > center.getX() - radius - threshold &&
             loc.getZ() < center.getZ() + radius + threshold &&
-            loc.getZ() > center.getZ() - radius - threshold;
+            loc.getZ() > center.getZ() - radius - threshold &&
+            loc.getY() > center.getWorld().getMinHeight() - threshold;
     }
 
     public static Location indexToLocation(int index) {

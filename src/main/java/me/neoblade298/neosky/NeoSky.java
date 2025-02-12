@@ -10,15 +10,22 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neosky.Listeners.IslandBlockListener;
+import me.neoblade298.neosky.Listeners.IslandEntityListener;
+import me.neoblade298.neosky.Listeners.IslandPlayerListener;
 import me.neoblade298.neosky.commands.CmdIsland;
 import me.neoblade298.neosky.commands.CmdIslandBan;
 import me.neoblade298.neosky.commands.CmdIslandDebug;
 import me.neoblade298.neosky.commands.CmdIslandDelete;
+import me.neoblade298.neosky.commands.CmdIslandDemote;
 import me.neoblade298.neosky.commands.CmdIslandJoin;
 import me.neoblade298.neosky.commands.CmdIslandLeave;
 import me.neoblade298.neosky.commands.CmdIslandNew;
+import me.neoblade298.neosky.commands.CmdIslandPromote;
 import me.neoblade298.neosky.commands.CmdIslandSpawn;
+import me.neoblade298.neosky.commands.CmdIslandTrust;
 import me.neoblade298.neosky.commands.CmdIslandUnban;
+import me.neoblade298.neosky.commands.CmdIslandUntrust;
 import me.neoblade298.neosky.commands.CmdIslandVisit;
 import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,7 +39,7 @@ public class NeoSky extends JavaPlugin {
 
         // TODO: perms
         SubcommandManager mgr = new SubcommandManager("island", null, NamedTextColor.AQUA, this);
-        mgr.register(new CmdIsland("", "Views your island menu", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIsland("", "View your island menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDelete("delete", "Delete your island (owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandJoin("join", "Join an existing island", null, SubcommandRunner.PLAYER_ONLY));
@@ -42,9 +49,15 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandVisit("visit", "Visit someone's island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandBan("ban", "Ban player from your island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandUnban("unban", "Unban player from your island", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandPromote("promote", "Promote an island member to officer", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandDemote("demote", "Demote an island officer to member", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandTrust("trust", "Trust a visiting player", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandUntrust("untrust", "Untrust a visiting player", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
 
-        Bukkit.getPluginManager().registerEvents(new IslandListener(), this);
+        Bukkit.getPluginManager().registerEvents(new IslandBlockListener(), this);
+        Bukkit.getPluginManager().registerEvents(new IslandEntityListener(), this);
+        Bukkit.getPluginManager().registerEvents(new IslandPlayerListener(), this);
 
         new BukkitRunnable() {
             @Override
@@ -81,5 +94,9 @@ public class NeoSky extends JavaPlugin {
         world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         world.setGameRule(GameRule.FORGIVE_DEAD_PLAYERS, true);
         world.setGameRule(GameRule.KEEP_INVENTORY, true);
+    }
+
+    public static boolean isSkyBlockWorld(World world) {
+        return world.getName() == "neoskyblockworld";
     }
 }
