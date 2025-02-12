@@ -178,7 +178,12 @@ public class Island {
     public void addBan(SkyPlayer sp) {
         if(!isMember(sp)) {
             bannedPlayers.add(sp);
-            // TODO: if player online and on island, tp them out
+        }
+
+        Player bp = Bukkit.getPlayer(sp.getUUID());
+
+        if(sp.getLocalIsland() == this && bp != null && bp.isOnline()) {
+            bp.teleport(bp.getWorld().getSpawnLocation());
         }
     }
 
