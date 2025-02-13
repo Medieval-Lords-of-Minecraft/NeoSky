@@ -9,4 +9,6 @@ public class IslandPermissions {
     public boolean canDropItems;
     public boolean canPickupItems;
     public boolean canKillMobs;
+
+    public boolean canManage;
 }

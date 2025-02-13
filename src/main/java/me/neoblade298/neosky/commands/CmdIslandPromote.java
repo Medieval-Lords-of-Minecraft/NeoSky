@@ -20,22 +20,39 @@ public class CmdIslandPromote extends Subcommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        Player promoter = (Player)sender;
-        SkyPlayer skyPromoter = SkyPlayerManager.getSkyPlayer(promoter.getUniqueId());
-        Island promoterIsland = skyPromoter.getMemberIsland();
+        Player p = (Player)sender;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
+        Island is = sp.getMemberIsland();
+        if(is == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
+        }
+
+        if(!is.isOwner(sp)) {
+            Util.msg(p, "You do not have permission to promote.");
+            return;
+        }
         
         Player promotee = Bukkit.getPlayer(args[0]);
         if(promotee == null) { // TODO: allow promoting offline players
-            Util.msg(promoter, "Player not found.");
+            Util.msg(p, "Player not found.");
             return;
         }
         SkyPlayer skyPromotee = SkyPlayerManager.getSkyPlayer(promotee.getUniqueId());
-
         Island promoteeIsland = skyPromotee.getMemberIsland();
 
-        if(promoterIsland != null && promoterIsland == promoteeIsland) {
-            promoterIsland.addOfficer(skyPromotee);
+        if(is != promoteeIsland) {
+            Util.msg(p, "You cannot promote non-members.");
+            return;
         }
+
+        if(sp == promotee) {
+            Util.msg(p, "You cannot promote yourself.");
+            return;
+        }
+        
+        is.addOfficer(skyPromotee);
+        Util.msg(p, "Player has been promoted.");
     }
 
 }

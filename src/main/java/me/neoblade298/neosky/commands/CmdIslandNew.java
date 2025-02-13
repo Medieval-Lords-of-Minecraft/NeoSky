@@ -21,7 +21,6 @@ public class CmdIslandNew extends Subcommand {
         Player p = (Player)sender;
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
-        // can't make island if you're in one
         if(sp.getMemberIsland() != null) {
             Util.msg(p, "You already have an island.");
             return;
@@ -29,5 +28,6 @@ public class CmdIslandNew extends Subcommand {
 
         Island island = IslandManager.createIsland(sp);
         island.spawnPlayer(p);
+        Util.msg(p, "Welcome to your new island!");
     }
 }

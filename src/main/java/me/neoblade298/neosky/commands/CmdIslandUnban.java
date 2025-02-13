@@ -28,17 +28,26 @@ public class CmdIslandUnban extends Subcommand {
             Util.msg(p, "Player not found.");
             return;
         }
+
         SkyPlayer skyOffender = SkyPlayerManager.getSkyPlayer(offender.getUniqueId());
 
-        Island island = sp.getMemberIsland();
-
-        if(island.isOwner(sp)) { // TODO: remove this check once perms are in
-            if(island.isBanned(skyOffender)) {
-                island.removeBan(skyOffender);
-                Util.msg(p, "Player has been unbanned from your island.");
-            } else {
-                Util.msg(p, "Player is not banned from your island.");
-            }
+        Island is = sp.getMemberIsland();
+        if(is == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
         }
+
+        if(!is.getHighestPermission(sp).canManage) {
+            Util.msg(p, "You do not have permission to unban.");
+            return;
+        }
+
+        if(!is.isBanned(skyOffender)) {
+            Util.msg(p, "Player is not banned from your island.");
+            return;
+        }
+        
+        is.removeBan(skyOffender);
+        Util.msg(p, "Player has been unbanned from your island.");
     }
 }

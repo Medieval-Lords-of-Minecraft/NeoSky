@@ -64,6 +64,7 @@ public class Island {
         officerPerms.canDropItems = true;
         officerPerms.canPickupItems = true;
         officerPerms.canKillMobs = true;
+        officerPerms.canManage = true;
 
         memberPerms.canInteract = true;
         memberPerms.canBuild = true;
@@ -72,6 +73,7 @@ public class Island {
         memberPerms.canDropItems = true;
         memberPerms.canPickupItems = true;
         memberPerms.canKillMobs = true;
+        memberPerms.canManage = false;
 
         trustedPerms.canInteract = true;
         trustedPerms.canBuild = false;
@@ -80,6 +82,7 @@ public class Island {
         trustedPerms.canDropItems = true;
         trustedPerms.canPickupItems = true;
         trustedPerms.canKillMobs = true;
+        trustedPerms.canManage = false; // redundant
 
         visitorPerms.canInteract = false;
         visitorPerms.canBuild = false;
@@ -88,6 +91,7 @@ public class Island {
         visitorPerms.canDropItems = false;
         visitorPerms.canPickupItems = false;
         visitorPerms.canKillMobs = false;
+        visitorPerms.canManage = false; // redundant
     }
 
     public IslandPermissions getHighestPermission(SkyPlayer sp) {
@@ -180,10 +184,10 @@ public class Island {
             bannedPlayers.add(sp);
         }
 
-        Player bp = Bukkit.getPlayer(sp.getUUID());
+        Player p = Bukkit.getPlayer(sp.getUUID());
 
-        if(sp.getLocalIsland() == this && bp != null && bp.isOnline()) {
-            bp.teleport(bp.getWorld().getSpawnLocation());
+        if(sp.getLocalIsland() == this && p != null && p.isOnline()) {
+            p.teleport(p.getWorld().getSpawnLocation());
         }
     }
 

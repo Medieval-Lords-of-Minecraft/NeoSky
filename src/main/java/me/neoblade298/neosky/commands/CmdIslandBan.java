@@ -28,20 +28,28 @@ public class CmdIslandBan extends Subcommand {
             Util.msg(p, "Player not found.");
             return;
         } else if(offender == p) { // TODO: add checking for players who cannot be banned using perms
-            Util.msg(p, "Player can not be banned.");
+            Util.msg(p, "Player cannot be banned.");
         }
 
         SkyPlayer skyOffender = SkyPlayerManager.getSkyPlayer(offender.getUniqueId());
 
-        Island island = sp.getMemberIsland();
-
-        if(island.isOwner(sp)) { // TODO: remove this check once perms are in
-            if(island.isBanned(skyOffender)) {
-                Util.msg(p, "Player is already banned from your island.");
-            } else {
-                island.addBan(skyOffender);
-                Util.msg(p, "Player has been banned from your island.");
-            }
+        Island is = sp.getMemberIsland();
+        if(is == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
         }
+
+        if(!is.getHighestPermission(sp).canManage) {
+            Util.msg(p, "You do not have permission to ban.");
+            return;
+        }
+
+        if(is.isBanned(skyOffender)) {
+            Util.msg(p, "Player is already banned from your island.");
+            return;
+        }
+        
+        is.addBan(skyOffender);
+        Util.msg(p, "Player has been banned from your island.");
     }
 }

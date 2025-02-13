@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.neoblade298.neocore.bukkit.commands.Subcommand;
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
@@ -21,9 +22,18 @@ public class CmdIslandDelete extends Subcommand {
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
 
         Island island = sp.getMemberIsland();
-        if(island == null || !island.isOwner(sp)) return; // TODO: error msgs
+        if(island == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
+        }
+        
+        if(!island.isOwner(sp)) {
+            Util.msg(p, "You do not have permission to delete.");
+            return;
+        }
 
         IslandManager.deleteIsland(island);
+        Util.msg(p, "Your island has been deleted.");
     }
 
 }

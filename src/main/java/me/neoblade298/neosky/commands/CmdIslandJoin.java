@@ -31,10 +31,14 @@ public class CmdIslandJoin extends Subcommand {
         }
         SkyPlayer skyJoinee = SkyPlayerManager.getSkyPlayer(joinee.getUniqueId());
 
-        Island island = skyJoinee.getMemberIsland();
-        if(island != null) {
-            island.addMember(skyJoiner);
+        Island is = skyJoinee.getMemberIsland();
+        if(is == null) {
+            Util.msg(joiner, "Player has no island.");
+            return;
         }
+
+        is.addMember(skyJoiner);
+        Util.msg(joiner, "Welcome to your new island!");
     }
 
 }

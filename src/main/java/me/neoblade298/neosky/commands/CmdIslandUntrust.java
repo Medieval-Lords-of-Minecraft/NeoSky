@@ -20,20 +20,34 @@ public class CmdIslandUntrust extends Subcommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        Player truster = (Player)sender;
-        SkyPlayer skyTruster = SkyPlayerManager.getSkyPlayer(truster.getUniqueId());
+        Player p = (Player)sender;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
         
         Player trustee = Bukkit.getPlayer(args[0]);
         if(trustee == null) { // TODO: allow untrusting offline players
-            Util.msg(truster, "Player not found.");
+            Util.msg(p, "Player not found.");
             return;
         }
         SkyPlayer skyTrustee = SkyPlayerManager.getSkyPlayer(trustee.getUniqueId());
 
-        Island island = skyTruster.getMemberIsland();
-        if(island != null) {
-            island.removeTrusted(skyTrustee);
+        Island is = sp.getMemberIsland();
+        if(is == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
         }
+
+        if(!is.getHighestPermission(sp).canManage) {
+            Util.msg(p, "You do not have permission to untrust.");
+            return;
+        }
+        
+        if(!is.isTrusted(skyTrustee)) {
+            Util.msg(p, "Player is not trusted on your island.");
+            return;
+        }
+
+        is.removeTrusted(skyTrustee);
+        Util.msg(p, "Player has been untrusted.");
     }
 
 }

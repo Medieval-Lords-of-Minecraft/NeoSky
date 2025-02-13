@@ -19,12 +19,23 @@ public class CmdIslandSetSpawn extends Subcommand {
     public void run(CommandSender sender, String[] args) {
         Player p = (Player)sender;
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
-        Island island = sp.getMemberIsland();
+        Island is = sp.getMemberIsland();
+        if(is == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
+        }
+
+        if(!is.getHighestPermission(sp).canManage) {
+            Util.msg(p, "You do not have permission to set spawn.");
+            return;
+        }
+
+        if(!is.containsLocation(p.getLocation(), 0)) {
+            Util.msg(p, "Cannot set spawn outside your island.");
+            return;
+        }
         
-        if(island != null) {
-            // TODO: Make sure spawn is set within the bounds of the island
-            island.setSpawn(p);
-            Util.msg(p, "Set island spawn.");
-        } // TODO: error msg
+        is.setSpawn(p);
+        Util.msg(p, "Your island spawn is set.");
     }
 }

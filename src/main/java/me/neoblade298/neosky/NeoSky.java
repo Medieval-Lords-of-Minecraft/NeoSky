@@ -37,8 +37,7 @@ public class NeoSky extends JavaPlugin {
 
         createWorld();
 
-        // TODO: perms
-        SubcommandManager mgr = new SubcommandManager("island", null, NamedTextColor.AQUA, this);
+        SubcommandManager mgr = new SubcommandManager("island", "neosky.general", NamedTextColor.AQUA, this);
         mgr.register(new CmdIsland("", "View your island menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandDelete("delete", "Delete your island (owner only)", null, SubcommandRunner.PLAYER_ONLY));
@@ -53,7 +52,8 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandDemote("demote", "Demote an island officer to member", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandTrust("trust", "Trust a visiting player", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandUntrust("untrust", "Untrust a visiting player", null, SubcommandRunner.PLAYER_ONLY));
-        mgr.register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
+        
+        new SubcommandManager("nsa", "neosky.admin", NamedTextColor.AQUA, this).register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
 
         Bukkit.getPluginManager().registerEvents(new IslandBlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new IslandEntityListener(), this);

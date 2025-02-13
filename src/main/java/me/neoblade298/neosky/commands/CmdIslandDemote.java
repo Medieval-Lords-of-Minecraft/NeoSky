@@ -20,22 +20,40 @@ public class CmdIslandDemote extends Subcommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        Player demoter = (Player)sender;
-        SkyPlayer skyDemoter = SkyPlayerManager.getSkyPlayer(demoter.getUniqueId());
-        Island demoterIsland = skyDemoter.getMemberIsland();
+        Player p = (Player)sender;
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
+        Island is = sp.getMemberIsland();
+        if(is == null) {
+            Util.msg(p, "You do not have an island.");
+            return;
+        }
+
+        if(!is.isOwner(sp)) {
+            Util.msg(p, "You do not have permission to demote.");
+            return;
+        }
         
         Player demotee = Bukkit.getPlayer(args[0]);
         if(demotee == null) { // TODO: allow demoting offline players
-            Util.msg(demoter, "Player not found.");
+            Util.msg(p, "Player not found.");
             return;
         }
-        SkyPlayer skyDemotee = SkyPlayerManager.getSkyPlayer(demotee.getUniqueId());
 
+        SkyPlayer skyDemotee = SkyPlayerManager.getSkyPlayer(demotee.getUniqueId());
         Island demoteeIsland = skyDemotee.getMemberIsland();
 
-        if(demoterIsland != null && demoterIsland == demoteeIsland) {
-            demoterIsland.removeOfficer(skyDemotee);
+        if(is != demoteeIsland) {
+            Util.msg(p, "You cannot demote non-members.");
+            return;
         }
+
+        if(sp == demotee) {
+            Util.msg(p, "You cannot demote yourself.");
+            return;
+        }
+
+        is.removeOfficer(skyDemotee);
+        Util.msg(p, "Player has been demoted.");
     }
 
 }
