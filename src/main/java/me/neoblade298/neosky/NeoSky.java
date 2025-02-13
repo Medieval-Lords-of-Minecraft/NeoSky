@@ -10,9 +10,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
-import me.neoblade298.neosky.Listeners.IslandBlockListener;
-import me.neoblade298.neosky.Listeners.IslandEntityListener;
-import me.neoblade298.neosky.Listeners.IslandPlayerListener;
 import me.neoblade298.neosky.commands.CmdIsland;
 import me.neoblade298.neosky.commands.CmdIslandBan;
 import me.neoblade298.neosky.commands.CmdIslandDebug;
@@ -27,6 +24,9 @@ import me.neoblade298.neosky.commands.CmdIslandTrust;
 import me.neoblade298.neosky.commands.CmdIslandUnban;
 import me.neoblade298.neosky.commands.CmdIslandUntrust;
 import me.neoblade298.neosky.commands.CmdIslandVisit;
+import me.neoblade298.neosky.listeners.IslandBlockListener;
+import me.neoblade298.neosky.listeners.IslandEntityListener;
+import me.neoblade298.neosky.listeners.IslandPlayerListener;
 import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import net.kyori.adventure.text.format.NamedTextColor;
 

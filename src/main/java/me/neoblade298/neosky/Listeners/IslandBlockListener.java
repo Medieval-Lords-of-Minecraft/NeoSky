@@ -1,4 +1,4 @@
-package me.neoblade298.neosky.Listeners;
+package me.neoblade298.neosky.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

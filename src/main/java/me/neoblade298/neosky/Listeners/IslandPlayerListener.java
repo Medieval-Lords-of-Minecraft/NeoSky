@@ -1,4 +1,4 @@
-package me.neoblade298.neosky.Listeners;
+package me.neoblade298.neosky.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
