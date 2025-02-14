@@ -1,5 +1,6 @@
 package me.neoblade298.neosky.listeners;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,6 +9,8 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandPermissions;
@@ -26,6 +29,16 @@ public class IslandBlockListener implements Listener {
         if(!perms.canBuild) {
             e.setCancelled(true);
         }
+
+        if(is == sp.getMemberIsland() && e.isDropItems()) {
+            Block b = e.getBlock();
+            for(MetadataValue val : b.getMetadata("placedByPlayer")) { // TODO: THIS DOESN'T WORK, need loc set
+                if(val.asBoolean()) {
+                    return; // no study if placed by player
+                }
+            }
+            is.getIslandStudy().increaseStudy(b.getType(), 1);
+        }
 	}
 
     @EventHandler
@@ -38,6 +51,8 @@ public class IslandBlockListener implements Listener {
         if(!perms.canBuild) {
             e.setCancelled(true);
         }
+
+        e.getBlockPlaced().setMetadata("placedByPlayer", new FixedMetadataValue(NeoSky.inst(), true));
 	}
 
     @EventHandler

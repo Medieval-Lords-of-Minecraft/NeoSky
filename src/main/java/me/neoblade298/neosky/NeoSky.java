@@ -31,9 +31,13 @@ import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class NeoSky extends JavaPlugin {
+    private static NeoSky instance;
+
     public void onEnable() {
         super.onEnable();
 		Bukkit.getServer().getLogger().info("NeoSky Enabled");
+
+        instance = this;
 
         createWorld();
 
@@ -70,6 +74,10 @@ public class NeoSky extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
         Bukkit.getServer().getLogger().info("NeoSky Disabled");
+    }
+
+    public static NeoSky inst() {
+        return instance;
     }
 
     private void createWorld() {

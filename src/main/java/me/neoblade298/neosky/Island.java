@@ -34,6 +34,8 @@ public class Island {
 
     private int radius;
 
+    private IslandStudy islandStudy = new IslandStudy();
+
     public Island(SkyPlayer owner, int index) {
         this.owner = owner;
         this.members.add(owner);
@@ -149,6 +151,7 @@ public class Island {
             members.remove(sp);
             officers.remove(sp);
         }
+        // TODO: handle study loss on leave
     }
 
     public boolean isMember(SkyPlayer sp) {
@@ -197,6 +200,10 @@ public class Island {
 
     public boolean isBanned(SkyPlayer sp) {
         return bannedPlayers.contains(sp);
+    }
+
+    public IslandStudy getIslandStudy() {
+        return islandStudy;
     }
 
     public void cleanup() {

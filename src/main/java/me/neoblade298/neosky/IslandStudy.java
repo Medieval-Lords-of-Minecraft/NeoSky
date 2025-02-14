@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
@@ -24,69 +25,75 @@ public class IslandStudy {
 
     // TODO: private Set<CustomRecipe> or something for unlocked recipes
 
-    public int getStudyAmount(Material study) {
-        return studyAmounts.getOrDefault(study, 0);
+    public int getStudyAmount(Material item) {
+        return studyAmounts.getOrDefault(item, 0);
     }
 
-    public void increaseStudy(Material study, int amount) {
-        if(!unlockedStudies.contains(study)) return;
+    public int getStudyLevel(Material item) {
+        return studyLevels.getOrDefault(item, 0);
+    }
 
-        int newAmount = studyAmounts.getOrDefault(study, 0) + amount;
-        studyAmounts.put(study, newAmount);
+    public void increaseStudy(Material item, int amount) {
+        if(!unlockedStudies.contains(item)) return;
 
-        StudyItem item = StudyItem.getItem(study);
-        int level = studyLevels.get(study);
-        while(newAmount >= item.getLevelRequirement(level + 1)) {
+        int newAmount = studyAmounts.getOrDefault(item, 0) + amount;
+        studyAmounts.put(item, newAmount);
+
+        StudyItem study = StudyItem.getItem(item);
+        int level = studyLevels.get(item);
+        while(newAmount >= study.getLevelRequirement(level + 1)) {
             level++;
-            item.onUnlock(level, this);
-            studyLevels.put(study, level);
+            study.onUnlock(level, this);
+            studyLevels.put(item, level);
         }
     }
 
-    public void decreaseStudy(Material study, int amount) {
-        int newAmount = studyAmounts.getOrDefault(study, 0) - amount;
+    public void decreaseStudy(Material item, int amount) {
+        int newAmount = studyAmounts.getOrDefault(item, 0) - amount;
         if(newAmount < 0) newAmount = 0;
-        studyAmounts.put(study, newAmount);
+        studyAmounts.put(item, newAmount);
 
-        StudyItem item = StudyItem.getItem(study);
-        int level = studyLevels.get(study);
-        while(newAmount < item.getLevelRequirement(level)) {
-            item.onRelock(level, this);
+        StudyItem study = StudyItem.getItem(item);
+        int level = studyLevels.get(item);
+        while(newAmount < study.getLevelRequirement(level)) {
+            study.onRelock(level, this);
             level--;
-            studyLevels.put(study, level);
+            studyLevels.put(item, level);
         }
     }
 
-    public boolean isStudyUnlocked(Material study) {
-        return unlockedStudies.contains(study);
+    public boolean isStudyUnlocked(Material item) {
+        return unlockedStudies.contains(item);
     }
 
-    public void unlockStudy(Material study) {
-        unlockedStudies.add(study);
+    public void unlockStudy(Material item) {
+        unlockedStudies.add(item);
+        studyLevels.put(item, 1);
     }
 
-    public void relockStudy(Material study) {
-        unlockedStudies.remove(study);
+    public void relockStudy(Material item) {
+        unlockedStudies.remove(item);
+        studyLevels.put(item, 0);
     }
 
-    public boolean isSpecialUnlocked(Material study) {
-        return unlockedSpecials.contains(study);
+    public boolean isSpecialUnlocked(Material item) {
+        return unlockedSpecials.contains(item);
     }
 
-    public void unlockSpecial(Material study) {
-        unlockedSpecials.add(study);
+    public void unlockSpecial(Material item) {
+        unlockedSpecials.add(item);
     }
 
-    public void relockSpecial(Material study) {
-        unlockedSpecials.remove(study);
+    public void relockSpecial(Material item) {
+        unlockedSpecials.remove(item);
     }
 
-    public Float getSellMult(Material study) {
-        return sellMults.getOrDefault(study, 1f);
+    public Float getSellMult(Material item) {
+        return sellMults.getOrDefault(item, 1f);
     }
 
-    public void setSellMult(Material study, Float mult) {
-        sellMults.put(study, mult);
+    public void setSellMult(Material item, Float mult) {
+        sellMults.put(item, mult);
     }
 
     public Material getRandomOre() {

@@ -17,7 +17,7 @@ public abstract class StudyItem {
     public Environment env;
     public int rank;
 
-    public int[] levelRequirements;
+    public int[] levelRequirements; // levels 0 and 1 are excluded (no numeric requirement)
 
     public int specialLevel;
     public ItemStack specialDrop;
@@ -32,19 +32,20 @@ public abstract class StudyItem {
     public float sellBonusAmount;
 
     public int getLevelRequirement(int level) {
-        if(level > levelRequirements.length) return Integer.MAX_VALUE;
-        return levelRequirements[level - 1];
+        if(level - 2 < 0) return Integer.MIN_VALUE;
+        if(level - 2 >= levelRequirements.length) return Integer.MAX_VALUE;
+        return levelRequirements[level - 2];
     }
 
     public void onUnlock(int newLevel, IslandStudy is) {
-        if(newLevel >= specialLevel) is.unlockSpecial(item);
-        //if(level >= recipeLevel) is.unlockRecipe(recipe);
-        if(newLevel >= nextUnlockLevel) is.unlockStudy(nextUnlock);
-        if(newLevel >= sellBonusLevel) is.setSellMult(item, sellBonusAmount);
+        if(newLevel == specialLevel) is.unlockSpecial(item);
+        //if(level == recipeLevel) is.unlockRecipe(recipe);
+        if(newLevel == nextUnlockLevel) is.unlockStudy(nextUnlock);
+        if(newLevel == sellBonusLevel) is.setSellMult(item, sellBonusAmount);
     }
 
     public void onRelock(int newLevel, IslandStudy is) {
-        if(newLevel < specialLevel) is.unlockSpecial(item);
+        if(newLevel < specialLevel) is.relockSpecial(item);
         //if(level < recipeLevel) is.relockRecipe(recipe);
         if(newLevel < nextUnlockLevel) is.relockStudy(nextUnlock);
         if(newLevel < sellBonusLevel) is.setSellMult(item, 1f);
