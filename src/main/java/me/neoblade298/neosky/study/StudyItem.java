@@ -1,41 +1,60 @@
 package me.neoblade298.neosky.study;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import me.neoblade298.neosky.Environment;
+import me.neoblade298.neosky.IslandStudy;
 
 public abstract class StudyItem {
-    protected Material item;
+    private static Map<Material, StudyItem> studyMap = new HashMap<Material, StudyItem>();
+
+    public Material item;
     
-    protected Environment env;
-    protected int rank;
+    public Environment env;
+    public int rank;
 
-    protected int[] levelRequirements = new int[7];
+    public int[] levelRequirements;
 
-    protected int specialLevel;
-    protected ItemStack specialDrop;
+    public int specialLevel;
+    public ItemStack specialDrop;
 
-    protected int recipeLevel;
-    // TODO: protected CustomRecipe recipe or something
+    public int recipeLevel;
+    // TODO: public CustomRecipe recipe or something
 
-    protected int nextUnlockLevel;
-    protected StudyItem nextUnlock;
+    public int nextUnlockLevel;
+    public Material nextUnlock;
 
-    protected int sellBonusLevel;
-    protected float sellBonusAmount;
+    public int sellBonusLevel;
+    public float sellBonusAmount;
+
+    public int getLevelRequirement(int level) {
+        if(level > levelRequirements.length) return Integer.MAX_VALUE;
+        return levelRequirements[level - 1];
+    }
 
     public void onUnlock(int newLevel, IslandStudy is) {
         if(newLevel >= specialLevel) is.unlockSpecial(item);
         //if(level >= recipeLevel) is.unlockRecipe(recipe);
-        if(newLevel >= nextUnlockLevel) is.unlockStudy(nextUnlock.item);
+        if(newLevel >= nextUnlockLevel) is.unlockStudy(nextUnlock);
         if(newLevel >= sellBonusLevel) is.setSellMult(item, sellBonusAmount);
     }
 
     public void onRelock(int newLevel, IslandStudy is) {
         if(newLevel < specialLevel) is.unlockSpecial(item);
         //if(level < recipeLevel) is.relockRecipe(recipe);
-        if(newLevel < nextUnlockLevel) is.relockStudy(nextUnlock.item);
+        if(newLevel < nextUnlockLevel) is.relockStudy(nextUnlock);
         if(newLevel < sellBonusLevel) is.setSellMult(item, 1f);
+    }
+
+    public static void createItem(StudyItem studyItem) {
+        studyMap.put(studyItem.item, studyItem);
+    }
+
+    public static StudyItem getItem(Material material) {
+        return studyMap.get(material);
     }
 }
