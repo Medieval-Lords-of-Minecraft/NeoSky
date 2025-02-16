@@ -150,12 +150,17 @@ public class Island {
         if(sp != owner) {
             members.remove(sp);
             officers.remove(sp);
+            sp.setMemberIsland(null);
         }
         // TODO: handle study loss on leave
     }
 
     public boolean isMember(SkyPlayer sp) {
         return members.contains(sp);
+    }
+
+    public List<SkyPlayer> getMembers() {
+        return members;
     }
 
     public void addOfficer(SkyPlayer sp) {
