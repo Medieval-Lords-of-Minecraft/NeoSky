@@ -1,12 +1,18 @@
 package me.neoblade298.neosky;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.Material;
 
 public class SkyPlayer {
     private UUID uuid;
 
     private Island memberIsland; // island the player is a member of
     private Island localIsland; // island the player is currently located at
+
+    private Map<Material, Integer> studyAmounts = new HashMap<Material, Integer>();
 
     public SkyPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -31,5 +37,9 @@ public class SkyPlayer {
     // TODO: handle this when player is not on ANY island (e.g. spawn)
     public void setLocalIsland(Island island) {
         localIsland = island;
+    }
+
+    public Map<Material, Integer> getStudyAmounts() {
+        return studyAmounts;
     }
 }

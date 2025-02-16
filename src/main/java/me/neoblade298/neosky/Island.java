@@ -2,6 +2,7 @@ package me.neoblade298.neosky;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -147,12 +148,16 @@ public class Island {
     }
 
     public void removeMember(SkyPlayer sp) {
-        if(sp != owner) {
-            members.remove(sp);
-            officers.remove(sp);
-            sp.setMemberIsland(null);
+        if(sp == owner) return;
+        
+        members.remove(sp);
+        officers.remove(sp);
+        sp.setMemberIsland(null);
+
+        for(Entry<Material, Integer> entry : sp.getStudyAmounts().entrySet()) {
+            islandStudy.decreaseStudy(entry.getKey(), entry.getValue());
         }
-        // TODO: handle study loss on leave
+        sp.getStudyAmounts().clear();
     }
 
     public boolean isMember(SkyPlayer sp) {
@@ -195,7 +200,7 @@ public class Island {
         Player p = Bukkit.getPlayer(sp.getUUID());
 
         if(sp.getLocalIsland() == this && p != null && p.isOnline()) {
-            p.teleport(p.getWorld().getSpawnLocation());
+            p.teleport(p.getWorld().getSpawnLocation()); // TODO: teleport to spawn world, not this world's spawn
         }
     }
 
@@ -212,6 +217,11 @@ public class Island {
     }
 
     public void cleanup() {
+        for(SkyPlayer sp : members) {
+            sp.setMemberIsland(null);
+            sp.getStudyAmounts().clear();
+        }
+
         for(SkyPlayer sp : localPlayers) {
             // TODO: teleport away + notify
             // TODO: queue for offline players
