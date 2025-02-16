@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 public class SkyPlayer {
@@ -37,6 +38,13 @@ public class SkyPlayer {
     // TODO: handle this when player is not on ANY island (e.g. spawn)
     public void setLocalIsland(Island island) {
         localIsland = island;
+
+        if(island == null) {
+            // TODO: set spawn to spawn world spawn
+        } else {
+            // hopefully player is always online when this changes
+            Bukkit.getPlayer(uuid).setRespawnLocation(island.getSpawn());
+        }
     }
 
     public Map<Material, Integer> getStudyAmounts() {

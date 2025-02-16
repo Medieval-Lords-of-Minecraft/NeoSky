@@ -35,7 +35,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
@@ -56,16 +55,13 @@ public class IslandPlayerListener implements Listener {
             Util.msg(e.getPlayer(), "You were banned from an island while you were offline.");
             // TODO: teleport to spawn
         }
+
+        // TODO: handle if player location changed while offline (need to update localisland and that will suck!)
 	}
 
     @EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		// TODO
-	}
-	
-    @EventHandler
-	public void onPlayerRespawn(PlayerRespawnEvent e) {
-        // TODO: respawn player on current island (not necessarily their own)
 	}
 	
     @EventHandler
