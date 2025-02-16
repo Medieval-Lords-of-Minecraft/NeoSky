@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
@@ -21,7 +20,15 @@ public class IslandStudy {
     private Set<Material> unlockedSpecials = new HashSet<Material>();
     private Map<Material, Float> sellMults = new HashMap<Material, Float>();
     
-    private List<Material> unlockedOres = new ArrayList<Material>(); // for ease of use
+    private Map<Environment, List<Material>> unlockedOres = new HashMap<Environment, List<Material>>(); // for ease of use
+
+    private Environment currEnvironment = Environment.EARTH;
+
+    public IslandStudy() {
+        for(Environment val : Environment.values()) {
+            unlockedOres.put(val, new ArrayList<Material>());
+        }
+    }
 
     // TODO: private Set<CustomRecipe> or something for unlocked recipes
 
@@ -97,14 +104,14 @@ public class IslandStudy {
     }
 
     public Material getRandomOre() {
-        return unlockedOres.get(NeoCore.gen.nextInt(unlockedOres.size()));
+        return unlockedOres.get(currEnvironment).get(NeoCore.gen.nextInt(unlockedOres.size()));
     }
 
     public void unlockOre(Material ore) {
-        unlockedOres.add(ore);
+        unlockedOres.get(currEnvironment).add(ore);
     }
 
     public void relockOre(Material ore) {
-        unlockedOres.remove(ore);
+        unlockedOres.get(currEnvironment).remove(ore);
     }
 }
