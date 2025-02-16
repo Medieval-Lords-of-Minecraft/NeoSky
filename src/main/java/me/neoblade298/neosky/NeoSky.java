@@ -19,6 +19,7 @@ import me.neoblade298.neosky.commands.CmdIslandJoin;
 import me.neoblade298.neosky.commands.CmdIslandLeave;
 import me.neoblade298.neosky.commands.CmdIslandNew;
 import me.neoblade298.neosky.commands.CmdIslandPromote;
+import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import me.neoblade298.neosky.commands.CmdIslandSpawn;
 import me.neoblade298.neosky.commands.CmdIslandTrust;
 import me.neoblade298.neosky.commands.CmdIslandUnban;
@@ -27,7 +28,6 @@ import me.neoblade298.neosky.commands.CmdIslandVisit;
 import me.neoblade298.neosky.listeners.IslandBlockListener;
 import me.neoblade298.neosky.listeners.IslandEntityListener;
 import me.neoblade298.neosky.listeners.IslandPlayerListener;
-import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class NeoSky extends JavaPlugin {
@@ -105,6 +105,6 @@ public class NeoSky extends JavaPlugin {
     }
 
     public static boolean isSkyBlockWorld(World world) {
-        return world.getName() == "neoskyblockworld";
+        return world.getName().equals("neoskyblockworld");
     }
 }
