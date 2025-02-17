@@ -13,30 +13,37 @@ import me.neoblade298.neocore.bukkit.inventories.CoreInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class UpgradesMenu extends CoreInventory {
-    public UpgradesMenu(Player player) {
+public class StudySubCategoryMenu extends CoreInventory {
+
+    private String env;
+
+    public StudySubCategoryMenu(Player player, String env, String type) {
         super(
             player, 
-            Bukkit.createInventory(player, 36, Component.text("Island Upgrades", NamedTextColor.BLACK))
+            Bukkit.createInventory(player, 27, Component.text("Island Studies | " + type, NamedTextColor.BLACK))
 		);
+
+        this.env = env;
 
         ItemStack[] contents = inv.getContents();
 
-        for(int i = 0; i < 36; i++)
+        for(int i = 0; i < 27; i++)
         {
             contents[i] = CoreInventory.createButton(Material.GRAY_STAINED_GLASS_PANE, Component.text(" "));
         }
 
-        contents[10] = CoreInventory.createButton(Material.GRASS_BLOCK, Component.text("Island Size", NamedTextColor.AQUA));
-        contents[11] = CoreInventory.createButton(Material.DIAMOND_BLOCK, Component.text("Ore Generator Level", NamedTextColor.AQUA));
-        contents[12] = CoreInventory.createButton(Material.STONE, Component.text("Ore Generator Type", NamedTextColor.AQUA));
-        contents[14] = CoreInventory.createButton(Material.PISTON, Component.text("Pistons", NamedTextColor.AQUA));
-        contents[15] = CoreInventory.createButton(Material.HOPPER, Component.text("Hoppers", NamedTextColor.AQUA));
-        contents[16] = CoreInventory.createButton(Material.REDSTONE, Component.text("Redstone", NamedTextColor.AQUA));
-        
+
+        if (env == "Earth" && type == "Mob") {
+            contents[11] = CoreInventory.createButton(Material.CHICKEN_SPAWN_EGG, Component.text("Chicken", NamedTextColor.AQUA));
+            contents[12] = CoreInventory.createButton(Material.FROG_SPAWN_EGG, Component.text("Frog", NamedTextColor.AQUA));
+            contents[13] = CoreInventory.createButton(Material.RABBIT_SPAWN_EGG, Component.text("Rabbit", NamedTextColor.AQUA));
+            contents[14] = CoreInventory.createButton(Material.PIG_SPAWN_EGG, Component.text("Pig", NamedTextColor.AQUA));
+            contents[15] = CoreInventory.createButton(Material.CREEPER_SPAWN_EGG, Component.text("Creeper", NamedTextColor.AQUA));
+        }
+
         ItemStack backButton = new ItemStack(Material.TIPPED_ARROW);
         backButton.removeItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        contents[27] = CoreInventory.createButton(backButton, Component.text("Go Back", NamedTextColor.AQUA));
+        contents[18] = CoreInventory.createButton(backButton, Component.text("Go Back", NamedTextColor.AQUA));
 
         inv.setContents(contents);
     }
@@ -49,9 +56,9 @@ public class UpgradesMenu extends CoreInventory {
 
         int slot = e.getSlot();
 
-        if (slot == 27) {
-            new IslandMenu(p);
-        }
+        if (slot == 18) {
+            new StudyCategoryMenu(p, env);
+        } 
     }
 
     @Override

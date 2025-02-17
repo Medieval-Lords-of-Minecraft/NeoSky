@@ -13,11 +13,11 @@ import me.neoblade298.neocore.bukkit.inventories.CoreInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class UpgradesMenu extends CoreInventory {
-    public UpgradesMenu(Player player) {
+public class PermissionCategoryMenu extends CoreInventory {
+    public PermissionCategoryMenu(Player player, String rank) {
         super(
             player, 
-            Bukkit.createInventory(player, 36, Component.text("Island Upgrades", NamedTextColor.BLACK))
+            Bukkit.createInventory(player, 36, Component.text("Island Permissions", NamedTextColor.BLACK))
 		);
 
         ItemStack[] contents = inv.getContents();
@@ -27,13 +27,15 @@ public class UpgradesMenu extends CoreInventory {
             contents[i] = CoreInventory.createButton(Material.GRAY_STAINED_GLASS_PANE, Component.text(" "));
         }
 
-        contents[10] = CoreInventory.createButton(Material.GRASS_BLOCK, Component.text("Island Size", NamedTextColor.AQUA));
-        contents[11] = CoreInventory.createButton(Material.DIAMOND_BLOCK, Component.text("Ore Generator Level", NamedTextColor.AQUA));
-        contents[12] = CoreInventory.createButton(Material.STONE, Component.text("Ore Generator Type", NamedTextColor.AQUA));
-        contents[14] = CoreInventory.createButton(Material.PISTON, Component.text("Pistons", NamedTextColor.AQUA));
-        contents[15] = CoreInventory.createButton(Material.HOPPER, Component.text("Hoppers", NamedTextColor.AQUA));
-        contents[16] = CoreInventory.createButton(Material.REDSTONE, Component.text("Redstone", NamedTextColor.AQUA));
-        
+        contents[12] = CoreInventory.createButton(Material.CRAFTING_TABLE, Component.text("Interact", NamedTextColor.AQUA));
+        contents[13] = CoreInventory.createButton(Material.GRASS_BLOCK, Component.text("Build/Break", NamedTextColor.AQUA));
+        contents[14] = CoreInventory.createButton(Material.OAK_DOOR, Component.text("Open Doors", NamedTextColor.AQUA));
+        contents[15] = CoreInventory.createButton(Material.CHEST, Component.text("Open Containers", NamedTextColor.AQUA));
+        contents[16] = CoreInventory.createButton(Material.FEATHER, Component.text("Drop Items", NamedTextColor.AQUA));
+
+        contents[21] = CoreInventory.createButton(Material.HOPPER, Component.text("Pickup Items", NamedTextColor.AQUA));
+        contents[22] = CoreInventory.createButton(Material.IRON_SWORD, Component.text("Kill Mobs", NamedTextColor.AQUA));
+
         ItemStack backButton = new ItemStack(Material.TIPPED_ARROW);
         backButton.removeItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         contents[27] = CoreInventory.createButton(backButton, Component.text("Go Back", NamedTextColor.AQUA));
@@ -49,8 +51,10 @@ public class UpgradesMenu extends CoreInventory {
 
         int slot = e.getSlot();
 
-        if (slot == 27) {
-            new IslandMenu(p);
+        switch(slot) {
+            case 27:
+                new PermissionsMenu(p);
+                break;
         }
     }
 

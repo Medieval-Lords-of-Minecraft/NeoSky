@@ -6,13 +6,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import me.neoblade298.neocore.bukkit.inventories.CoreInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class StudiesMenu extends CoreInventory{
+public class StudiesMenu extends CoreInventory {
     public StudiesMenu(Player player) {
         super(
             player, 
@@ -30,7 +31,9 @@ public class StudiesMenu extends CoreInventory{
         contents[13] = CoreInventory.createButton(Material.NETHERRACK, Component.text("Nether", NamedTextColor.GOLD));
         contents[15] = CoreInventory.createButton(Material.END_STONE, Component.text("End", NamedTextColor.DARK_PURPLE));
 
-        contents[18] = CoreInventory.createButton(Material.TIPPED_ARROW, Component.text("Go Back", NamedTextColor.AQUA));
+        ItemStack backButton = new ItemStack(Material.TIPPED_ARROW);
+        backButton.removeItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        contents[18] = CoreInventory.createButton(backButton, Component.text("Go Back", NamedTextColor.AQUA));
 
         inv.setContents(contents);
     }
@@ -43,8 +46,19 @@ public class StudiesMenu extends CoreInventory{
 
         int slot = e.getSlot();
 
-        if (slot == 18) {
-            new IslandMenu(p);
+        switch(slot) {
+            case 11:
+                new StudyCategoryMenu(p, "Earth");
+                break;
+            case 13:
+                new StudyCategoryMenu(p, "Nether");
+                break;
+            case 15:
+                new StudyCategoryMenu(p, "End");
+                break;
+            case 18:
+                new IslandMenu(p);
+                break;
         }
     }
 
