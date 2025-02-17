@@ -13,12 +13,17 @@ import me.neoblade298.neocore.bukkit.inventories.CoreInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class PermissionsMenu extends CoreInventory {
-    public PermissionsMenu(Player player) {
+public class StudyCategoryMenu extends CoreInventory {
+
+    private String env;
+
+    public StudyCategoryMenu(Player player, String env) {
         super(
             player, 
-            Bukkit.createInventory(player, 27, Component.text("Island Permissions", NamedTextColor.BLACK))
+            Bukkit.createInventory(player, 27, Component.text("Island Studies | " + env, NamedTextColor.BLACK))
 		);
+
+        this.env = env;
 
         ItemStack[] contents = inv.getContents();
 
@@ -27,10 +32,11 @@ public class PermissionsMenu extends CoreInventory {
             contents[i] = CoreInventory.createButton(Material.GRAY_STAINED_GLASS_PANE, Component.text(" "));
         }
 
-        contents[11] = CoreInventory.createButton(Material.RED_CONCRETE, Component.text("Visitor", NamedTextColor.AQUA));
-        contents[12] = CoreInventory.createButton(Material.ORANGE_CONCRETE, Component.text("Trusted", NamedTextColor.AQUA));
-        contents[14] = CoreInventory.createButton(Material.YELLOW_CONCRETE, Component.text("Member", NamedTextColor.AQUA));
-        contents[15] = CoreInventory.createButton(Material.GREEN_CONCRETE, Component.text("Officer", NamedTextColor.AQUA));
+        contents[11] = CoreInventory.createButton(Material.ROTTEN_FLESH, Component.text("Mob", NamedTextColor.AQUA));
+        contents[12] = CoreInventory.createButton(Material.IRON_INGOT, Component.text("Ore", NamedTextColor.AQUA));
+        contents[13] = CoreInventory.createButton(Material.WHEAT, Component.text("Crop", NamedTextColor.AQUA));
+        contents[14] = CoreInventory.createButton(Material.OAK_SAPLING, Component.text("Tree", NamedTextColor.AQUA));
+        contents[15] = CoreInventory.createButton(Material.TROPICAL_FISH, Component.text("Fish", NamedTextColor.AQUA));
 
         ItemStack backButton = new ItemStack(Material.TIPPED_ARROW);
         backButton.removeItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
@@ -49,19 +55,22 @@ public class PermissionsMenu extends CoreInventory {
 
         switch(slot) {
             case 11:
-                new PermissionCategoryMenu(p, "Visitor");
+                new StudySubCategoryMenu(p, env, "Mob");
                 break;
             case 12:
-                new PermissionCategoryMenu(p, "Trusted");
+                new StudySubCategoryMenu(p, env, "Ore");
+                break;
+            case 13:
+                new StudySubCategoryMenu(p, env, "Crop");
                 break;
             case 14:
-                new PermissionCategoryMenu(p, "Member");
+                new StudySubCategoryMenu(p, env, "Tree");
                 break;
             case 15:
-                new PermissionCategoryMenu(p, "Officer");
+                new StudySubCategoryMenu(p, env, "Fish");
                 break;
             case 18:
-                new IslandMenu(p);
+                new StudiesMenu(p);
                 break;
         }
     }
