@@ -35,14 +35,13 @@ public class SkyPlayer {
         return localIsland;
     }
 
-    // TODO: handle this when player is not on ANY island (e.g. spawn)
+    // hopefully player is always online when this is called
     public void setLocalIsland(Island island) {
         localIsland = island;
 
         if(island == null) {
-            // TODO: set spawn to spawn world spawn
+            Bukkit.getPlayer(uuid).setRespawnLocation(NeoSky.getSpawnWorld().getSpawnLocation());
         } else {
-            // hopefully player is always online when this changes
             Bukkit.getPlayer(uuid).setRespawnLocation(island.getSpawn());
         }
     }

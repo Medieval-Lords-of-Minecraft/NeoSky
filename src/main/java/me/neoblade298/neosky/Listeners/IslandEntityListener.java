@@ -40,7 +40,7 @@ public class IslandEntityListener implements Listener {
 	
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getLocation().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getLocation().getWorld())) return;
 
 
 
@@ -76,7 +76,7 @@ public class IslandEntityListener implements Listener {
 
 	@EventHandler
 	public void onPigHitByLightning(PigZapEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getEntity().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
         e.setCancelled(true);
 	}
 }

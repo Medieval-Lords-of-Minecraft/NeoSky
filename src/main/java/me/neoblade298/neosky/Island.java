@@ -200,7 +200,7 @@ public class Island {
         Player p = Bukkit.getPlayer(sp.getUUID());
 
         if(sp.getLocalIsland() == this && p != null && p.isOnline()) {
-            p.teleport(p.getWorld().getSpawnLocation()); // TODO: teleport to spawn world, not this world's spawn
+            p.teleport(NeoSky.getSpawnWorld().getSpawnLocation());
         }
     }
 
@@ -223,9 +223,11 @@ public class Island {
         }
 
         for(SkyPlayer sp : localPlayers) {
-            // TODO: teleport away + notify
-            // TODO: queue for offline players
-            sp.setLocalIsland(null); // temp
+            Player p = Bukkit.getPlayer(sp.getUUID());
+            if(p != null) {
+                p.teleport(NeoSky.getSpawnWorld().getSpawnLocation());
+            }
+            // TODO: queue tp for offline players
         }
 
         for(int x = center.getBlockX() - radius - 1; x <= center.getBlockX() + radius + 1; x++) {

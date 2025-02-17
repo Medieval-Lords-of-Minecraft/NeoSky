@@ -35,7 +35,7 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
         Island is = sp.getLocalIsland();
@@ -60,7 +60,7 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
         Island is = sp.getLocalIsland();
@@ -77,7 +77,7 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
     public void onMultiBlockPlace(BlockMultiPlaceEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
         for(BlockState bs : e.getReplacedBlockStates()) {
             placedBlocks.add(bs.getBlock().getLocation());
@@ -86,7 +86,7 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
         for(Block b : e.getBlocks()) {
             placedBlocks.remove(b.getLocation());
@@ -99,7 +99,7 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
     public void onPistonRetract(BlockPistonRetractEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
         if(!e.isSticky()) return;
 
@@ -114,14 +114,14 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
 	public void onBlockBurn(BlockBurnEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
 
 		e.setCancelled(true);
 	}
 
     @EventHandler
 	public void onBlockIgnite(BlockIgniteEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         if(e.getPlayer() == null) return;
 
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
@@ -137,7 +137,7 @@ public class IslandBlockListener implements Listener {
 	
     @EventHandler
 	public void onFrostWalkerFreezeWater(EntityBlockFormEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
 
 		if (e.getEntity() instanceof Player p) {
             SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
@@ -154,7 +154,7 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getLocation().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getLocation().getWorld())) return;
         
         for(Block b : e.blockList()) {
             placedBlocks.remove(b.getLocation());
@@ -163,37 +163,37 @@ public class IslandBlockListener implements Listener {
 
     @EventHandler
     public void onFade(BlockFadeEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
     }
 
     @EventHandler
     public void onForm(BlockFormEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
     }
 
     @EventHandler
     public void onFlow(BlockFromToEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
     }
 
     @EventHandler
     public void onGrow(BlockGrowEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
     }
 
     @EventHandler
     public void onSpread(BlockSpreadEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
     }
 
     @EventHandler
     public void onForm(EntityBlockFormEvent e) {
-        if(!NeoSky.isSkyBlockWorld(e.getBlock().getWorld())) return;
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
     }
 }

@@ -31,6 +31,9 @@ import me.neoblade298.neosky.listeners.IslandPlayerListener;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class NeoSky extends JavaPlugin {
+    private static final String SKY_WORLD_NAME = "neoskyblockworld";
+    private static final String SPAWN_WORLD_NAME = "Dev";
+
     private static NeoSky instance;
 
     public void onEnable() {
@@ -81,9 +84,9 @@ public class NeoSky extends JavaPlugin {
     }
 
     private void createWorld() {
-        if(Bukkit.getWorld("neoskyblockworld") != null) return;
+        if(Bukkit.getWorld(SKY_WORLD_NAME) != null) return;
         
-        WorldCreator creator = new WorldCreator("neoskyblockworld");
+        WorldCreator creator = new WorldCreator(SKY_WORLD_NAME);
         creator.generateStructures(false);
         creator.generator(new NeoSkyChunkGenerator());
 
@@ -104,7 +107,15 @@ public class NeoSky extends JavaPlugin {
         world.setGameRule(GameRule.KEEP_INVENTORY, true);
     }
 
-    public static boolean isSkyBlockWorld(World world) {
-        return world.getName().equals("neoskyblockworld");
+    public static boolean isSkyWorld(World world) {
+        return world.equals(getSkyWorld());
+    }
+
+    public static World getSkyWorld() {
+        return Bukkit.getWorld(SKY_WORLD_NAME);
+    }
+
+    public static World getSpawnWorld() {
+        return Bukkit.getWorld(SPAWN_WORLD_NAME);
     }
 }

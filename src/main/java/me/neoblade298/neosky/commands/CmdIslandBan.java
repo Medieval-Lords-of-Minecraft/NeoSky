@@ -27,8 +27,11 @@ public class CmdIslandBan extends Subcommand {
         if(offender == null) {
             Util.msg(p, "Player not found.");
             return;
-        } else if(offender == p) { // TODO: add checking for players who cannot be banned using perms
-            Util.msg(p, "Player cannot be banned.");
+        }
+        
+        if(offender == p) {
+            Util.msg(p, "You cannot ban yourself.");
+            return;
         }
 
         SkyPlayer skyOffender = SkyPlayerManager.getSkyPlayer(offender.getUniqueId());
