@@ -40,8 +40,10 @@ public class IslandStudy {
         return studyLevels.getOrDefault(item, 0);
     }
 
-    public void increaseStudy(Material item, int amount) {
-        if(!unlockedStudies.contains(item)) return;
+    // returns true if study increased
+    public boolean tryIncreaseStudy(Material item, int amount) {
+        if(amount < 1) return false;
+        if(!unlockedStudies.contains(item)) return false;
 
         int newAmount = studyAmounts.getOrDefault(item, 0) + amount;
         studyAmounts.put(item, newAmount);
@@ -53,9 +55,12 @@ public class IslandStudy {
             study.onUnlock(level, this);
             studyLevels.put(item, level);
         }
+        return true;
     }
 
     public void decreaseStudy(Material item, int amount) {
+        if(amount < 1) return;
+        
         int newAmount = studyAmounts.getOrDefault(item, 0) - amount;
         if(newAmount < 0) newAmount = 0;
         studyAmounts.put(item, newAmount);

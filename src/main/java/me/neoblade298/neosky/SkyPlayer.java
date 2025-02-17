@@ -49,4 +49,17 @@ public class SkyPlayer {
     public Map<Material, Integer> getStudyAmounts() {
         return studyAmounts;
     }
+
+    public void increaseStudy(Material item, int amount) {
+        if(amount < 1) return;
+        studyAmounts.put(item, studyAmounts.getOrDefault(item, 0) + amount);
+    }
+
+    public void decreaseStudy(Material item, int amount) {
+        if(amount < 1) return;
+        
+        int newAmount = studyAmounts.getOrDefault(item, 0) - amount;
+        if(newAmount < 0) newAmount = 0;
+        studyAmounts.put(item, newAmount);
+    }
 }

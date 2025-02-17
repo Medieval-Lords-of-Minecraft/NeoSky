@@ -30,10 +30,13 @@ public class IslandEntityListener implements Listener {
         if(e.getEntity() instanceof LivingEntity) {
             if(!perms.canKillMobs){
                 e.setCancelled(true);
+                return;
             }
+                // TODO: handle mob study
         } else {
             if(!perms.canBuild) {
                 e.setCancelled(true);
+                return;
             }
         }
     }
@@ -56,6 +59,7 @@ public class IslandEntityListener implements Listener {
         IslandPermissions perms = is.getHighestPermission(sp);
         if(!perms.canBuild) {
             e.setCancelled(true);
+            return;
         }
     }
 
@@ -71,6 +75,7 @@ public class IslandEntityListener implements Listener {
         IslandPermissions perms = is.getHighestPermission(sp);
         if (!perms.canInteract) {
             e.setCancelled(true);
+            return;
         }
 	}
 

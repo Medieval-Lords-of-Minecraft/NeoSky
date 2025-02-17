@@ -51,7 +51,9 @@ public class IslandBlockListener implements Listener {
 
         if(is == sp.getMemberIsland() && e.isDropItems()) {
             if(!placedBlocks.contains(b.getLocation())) { // no study if placed by player
-                is.getIslandStudy().increaseStudy(b.getType(), 1);
+                if(is.getIslandStudy().tryIncreaseStudy(b.getType(), 1)) {
+                    sp.increaseStudy(b.getType(), 1);
+                }
             }
         }
 
