@@ -58,6 +58,17 @@ public class IslandPlayerListener implements Listener {
 
         // TODO: handle if player location changed while offline (need to update localisland and that will suck!)
 	}
+
+    @EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent e) {
+        Player p = e.getPlayer();
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
+        Island is = sp.getLocalIsland();
+        if(is == null) return;
+
+        is.removeLocalPlayer(sp);
+        sp.setLocalIsland(null);
+	}
 	
     @EventHandler
 	public void onPlayerBucketEmpty(PlayerBucketEmptyEvent e) {
@@ -195,17 +206,6 @@ public class IslandPlayerListener implements Listener {
         if(!perms.canInteract) {
             e.setCancelled(true);
         }
-	}
-
-    @EventHandler
-	public void onPlayerTeleport(PlayerTeleportEvent e) {
-        Player p = e.getPlayer();
-        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
-        Island is = sp.getLocalIsland();
-        if(is == null) return;
-
-        is.removeLocalPlayer(sp);
-        sp.setLocalIsland(null);
 	}
 
 	@EventHandler

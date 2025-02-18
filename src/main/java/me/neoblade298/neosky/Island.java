@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class Island {
     private static final int MAX_ISLAND_RADIUS = 1; // chunks
@@ -131,6 +132,7 @@ public class Island {
 
     public void spawnPlayer(Player player) {
         player.teleport(spawn);
+        player.setVelocity(new Vector());
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
         sp.setLocalIsland(this);
         localPlayers.add(sp);
@@ -222,7 +224,7 @@ public class Island {
             sp.getStudyAmounts().clear();
         }
 
-        for(SkyPlayer sp : localPlayers) {
+        for(SkyPlayer sp : List.copyOf(localPlayers)) { // need to use copy because of removals
             Player p = Bukkit.getPlayer(sp.getUUID());
             if(p != null) {
                 p.teleport(NeoSky.getSpawnWorld().getSpawnLocation());
@@ -250,8 +252,7 @@ public class Island {
         return loc.getX() < center.getX() + radius + threshold &&
             loc.getX() > center.getX() - radius - threshold &&
             loc.getZ() < center.getZ() + radius + threshold &&
-            loc.getZ() > center.getZ() - radius - threshold &&
-            loc.getY() > center.getWorld().getMinHeight() - threshold;
+            loc.getZ() > center.getZ() - radius - threshold;
     }
 
     public static Location indexToLocation(int index) {

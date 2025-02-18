@@ -23,6 +23,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandPermissions;
@@ -197,5 +198,11 @@ public class IslandBlockListener implements Listener {
     public void onForm(EntityBlockFormEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         placedBlocks.remove(e.getBlock().getLocation());
+    }
+
+    @EventHandler
+    public void onPortalCreate(PortalCreateEvent e) {
+        if(!NeoSky.isSkyWorld(e.getWorld())) return;
+        e.setCancelled(true);
     }
 }

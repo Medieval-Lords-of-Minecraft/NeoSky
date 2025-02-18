@@ -88,6 +88,7 @@ public class NeoSky extends JavaPlugin {
         
         WorldCreator creator = new WorldCreator(SKY_WORLD_NAME);
         creator.generateStructures(false);
+        creator.biomeProvider(new NeoSkyBiomeProvider());
         creator.generator(new NeoSkyChunkGenerator());
 
         World world = creator.createWorld();
