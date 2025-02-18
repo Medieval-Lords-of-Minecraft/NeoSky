@@ -61,13 +61,25 @@ public class IslandPlayerListener implements Listener {
 
     @EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
-        Player p = e.getPlayer();
-        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
-        Island is = sp.getLocalIsland();
-        if(is == null) return;
-
-        is.removeLocalPlayer(sp);
-        sp.setLocalIsland(null);
+        switch(e.getCause()) {
+            case END_GATEWAY:
+            case END_PORTAL:
+            case NETHER_PORTAL:
+                e.setCancelled(true);
+                return;
+            case COMMAND:
+            case PLUGIN:
+                Player p = e.getPlayer();
+                SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
+                Island is = sp.getLocalIsland();
+                if(is == null) return;
+        
+                is.removeLocalPlayer(sp);
+                sp.setLocalIsland(null);
+                return;
+            default:
+                return;
+        }
 	}
 	
     @EventHandler
