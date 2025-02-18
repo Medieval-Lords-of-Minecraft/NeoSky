@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 public class IslandManager {
     static int indexer = 0;
@@ -33,11 +32,11 @@ public class IslandManager {
     }
 
     public static void spawnPlayerToLocalIsland(Player p, Island is) {
+        p.setFallDistance(0);
         if(is != SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getMemberIsland()) {
             is.spawnVisitorPlayer(p);
         } else {
             is.spawnPlayer(p);
         }
-        p.setVelocity(new Vector());
     }
 }

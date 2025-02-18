@@ -1,8 +1,9 @@
 package me.neoblade298.neosky;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,12 +23,12 @@ public class Island {
     private Location visitorSpawn;
 
     private SkyPlayer owner;
-    private List<SkyPlayer> officers = new ArrayList<SkyPlayer>();
-    private List<SkyPlayer> members = new ArrayList<SkyPlayer>();
-    private List<SkyPlayer> trustedPlayers = new ArrayList<SkyPlayer>();
-    private List<SkyPlayer> bannedPlayers = new ArrayList<SkyPlayer>();
+    private Set<SkyPlayer> officers = new HashSet<SkyPlayer>();
+    private Set<SkyPlayer> members = new HashSet<SkyPlayer>();
+    private Set<SkyPlayer> trustedPlayers = new HashSet<SkyPlayer>();
+    private Set<SkyPlayer> bannedPlayers = new HashSet<SkyPlayer>();
 
-    private List<SkyPlayer> localPlayers = new ArrayList<SkyPlayer>();
+    private Set<SkyPlayer> localPlayers = new HashSet<SkyPlayer>();
 
     private IslandPermissions officerPerms = new IslandPermissions();
     private IslandPermissions memberPerms = new IslandPermissions();
@@ -182,7 +183,7 @@ public class Island {
         return members.contains(sp);
     }
 
-    public List<SkyPlayer> getMembers() {
+    public Set<SkyPlayer> getMembers() {
         return members;
     }
 

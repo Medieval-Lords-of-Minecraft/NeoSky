@@ -7,12 +7,15 @@ import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PigZapEvent;
+
+import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
 
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
@@ -63,13 +66,25 @@ public class IslandEntityListener implements Listener {
                 e.setCancelled(true);
                 return;
             case SPAWNER:
-                // TODO: handle mob spawners
+                // handled elsewhere
                 return;
             default:
                 // the rest are allowed
                 return;
         }
 	}
+
+    @EventHandler
+    public void onPreCreatureSpawn(PreCreatureSpawnEvent e) {
+        if(!NeoSky.isSkyWorld(e.getSpawnLocation().getWorld())) return;
+
+        if(e.getReason() == SpawnReason.NATURAL) {
+            e.setCancelled(true);
+            return;
+        }
+        
+        // else TODO: handle spawner spawns (allow vanilla spawns)
+    }
 
     @EventHandler
     public void onEntityPlace(EntityPlaceEvent e) {
@@ -110,9 +125,13 @@ public class IslandEntityListener implements Listener {
             Island is = sp.getLocalIsland();
             if(is == null) return;
 
+            e.setCancelled(true);
             IslandManager.spawnPlayerToLocalIsland(p, is);
+            return;
         } else {
+            e.setCancelled(true);
             e.getEntity().remove();
+            return;
         }
     }
 
