@@ -41,6 +41,6 @@ public class CmdIslandVisit extends Subcommand {
             return;
         }
         
-        is.spawnPlayer(visitor);
+        is.spawnVisitorPlayer(visitor);
     }
 }

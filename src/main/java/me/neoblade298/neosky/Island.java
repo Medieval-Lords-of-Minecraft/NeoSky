@@ -19,6 +19,7 @@ public class Island {
     private int index;
     private Location center;
     private Location spawn;
+    private Location visitorSpawn;
 
     private SkyPlayer owner;
     private List<SkyPlayer> officers = new ArrayList<SkyPlayer>();
@@ -50,6 +51,8 @@ public class Island {
 
         spawn = center.clone();
         spawn.add(0, 1, 0);
+
+        visitorSpawn = spawn;
 
         radius = 10; // TODO: load from config
 
@@ -129,8 +132,23 @@ public class Island {
         spawn = player.getLocation();
     }
 
+    public Location getVisitorSpawn() {
+        return visitorSpawn.clone();
+    }
+
+    public void setVisitorSpawn(Player player) {
+        visitorSpawn = player.getLocation();
+    }
+
     public void spawnPlayer(Player player) {
         player.teleport(spawn);
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
+        sp.setLocalIsland(this);
+        localPlayers.add(sp);
+    }
+
+    public void spawnVisitorPlayer(Player player) {
+        player.teleport(visitorSpawn);
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(player.getUniqueId());
         sp.setLocalIsland(this);
         localPlayers.add(sp);
