@@ -6,6 +6,9 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.spawner.SpawnRule;
+import org.bukkit.block.spawner.SpawnerEntry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -76,6 +79,17 @@ public class IslandBlockListener implements Listener {
         }
 
         placedBlocks.add(e.getBlockPlaced().getLocation());
+
+        // removes spawn restrictions from spawner, keeps everything else
+        if(e.getBlockPlaced().getState() instanceof CreatureSpawner spawner) {
+            if(spawner.getSpawnedEntity() == null) return;
+            
+            SpawnRule rule = new SpawnRule(0, 15, 0, 15);
+            SpawnerEntry entry = new SpawnerEntry(spawner.getSpawnedEntity(), 1, rule);
+            spawner.setSpawnedEntity(entry);
+            spawner.setSpawnCount(1);
+            spawner.update(true);
+        }
 	}
 
     @EventHandler

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class IslandManager {
     static int indexer = 0;
-    private static List<Island> islands = new ArrayList<Island>();
+    private static List<Island> islands = new ArrayList<Island>(); // TODO: change to hashmap for index access
 
     public static Island createIsland(SkyPlayer owner) {
         Island island = new Island(owner, indexer++);

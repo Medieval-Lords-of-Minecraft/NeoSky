@@ -7,15 +7,13 @@ import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PigZapEvent;
-
-import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
 
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
@@ -25,12 +23,14 @@ import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
 
 public class IslandEntityListener implements Listener {
+    @EventHandler
     public void onEntityDamageEntity(EntityDamageByEntityEvent e) {
-        if(!(e.getDamager() instanceof Player)) return;
-
-        Player p = (Player)e.getDamager();
+        if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
+        if(!(e.getDamager() instanceof Player p)) return;
+        
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
         Island is = sp.getLocalIsland();
+        if(is == null) return;
 
         IslandPermissions perms = is.getHighestPermission(sp);
 
@@ -39,13 +39,19 @@ public class IslandEntityListener implements Listener {
                 e.setCancelled(true);
                 return;
             }
-            // TODO: handle mob study
         } else {
             if(!perms.canBuild) {
                 e.setCancelled(true);
                 return;
             }
         }
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent e) {
+        if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
+        
+        // TODO: handle mob study and stacked mob decrease
     }
 	
 	@EventHandler
@@ -66,25 +72,13 @@ public class IslandEntityListener implements Listener {
                 e.setCancelled(true);
                 return;
             case SPAWNER:
-                // handled elsewhere
+                // TODO: handle
                 return;
             default:
                 // the rest are allowed
                 return;
         }
 	}
-
-    @EventHandler
-    public void onPreCreatureSpawn(PreCreatureSpawnEvent e) {
-        if(!NeoSky.isSkyWorld(e.getSpawnLocation().getWorld())) return;
-
-        if(e.getReason() == SpawnReason.NATURAL) {
-            e.setCancelled(true);
-            return;
-        }
-        
-        // else TODO: handle spawner spawns (allow vanilla spawns)
-    }
 
     @EventHandler
     public void onEntityPlace(EntityPlaceEvent e) {
