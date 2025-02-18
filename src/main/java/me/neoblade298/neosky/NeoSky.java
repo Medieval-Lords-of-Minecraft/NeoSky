@@ -20,6 +20,7 @@ import me.neoblade298.neosky.commands.CmdIslandLeave;
 import me.neoblade298.neosky.commands.CmdIslandNew;
 import me.neoblade298.neosky.commands.CmdIslandPromote;
 import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
+import me.neoblade298.neosky.commands.CmdIslandSetVisitorSpawn;
 import me.neoblade298.neosky.commands.CmdIslandSpawn;
 import me.neoblade298.neosky.commands.CmdIslandTrust;
 import me.neoblade298.neosky.commands.CmdIslandUnban;
@@ -52,6 +53,7 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandLeave("leave", "Leave your island (non-owner only)", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandSpawn("spawn", "Teleport to your island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandSetSpawn("setspawn", "Set your island spawn", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandSetVisitorSpawn("setvisitorspawn", "Set your island visitor spawn", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandVisit("visit", "Visit someone's island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandBan("ban", "Ban player from your island", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandUnban("unban", "Unban player from your island", null, SubcommandRunner.PLAYER_ONLY));

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class IslandManager {
     static int indexer = 0;
@@ -16,21 +17,27 @@ public class IslandManager {
         return island;
     }
 
-    public static void deleteIsland(Island island) {
-        islands.remove(island);
-        island.cleanup();
+    public static void deleteIsland(Island is) {
+        islands.remove(is);
+        is.cleanup();
     }
 
     public static void restrictPlayersToIslands() {
         for(Player p : Bukkit.getOnlinePlayers()) {
-            Island island = SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getLocalIsland();
-            if(island != null && !island.containsLocation(p.getLocation(), 1)) {
-                spawnPlayerToIsland(p, island);
+            Island is = SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getLocalIsland();
+
+            if(is != null && !is.containsLocation(p.getLocation(), 1)) {
+                spawnPlayerToLocalIsland(p, is);
             }
         }
     }
 
-    public static void spawnPlayerToIsland(Player p, Island is) {
-        is.spawnPlayer(p);
+    public static void spawnPlayerToLocalIsland(Player p, Island is) {
+        if(is != SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getMemberIsland()) {
+            is.spawnVisitorPlayer(p);
+        } else {
+            is.spawnPlayer(p);
+        }
+        p.setVelocity(new Vector());
     }
 }

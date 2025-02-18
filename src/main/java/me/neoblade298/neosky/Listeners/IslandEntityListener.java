@@ -110,7 +110,7 @@ public class IslandEntityListener implements Listener {
             Island is = sp.getLocalIsland();
             if(is == null) return;
 
-            IslandManager.spawnPlayerToIsland(p, is);
+            IslandManager.spawnPlayerToLocalIsland(p, is);
         } else {
             e.getEntity().remove();
         }
