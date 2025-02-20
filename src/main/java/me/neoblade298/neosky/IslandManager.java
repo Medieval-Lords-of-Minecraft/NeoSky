@@ -1,24 +1,39 @@
 package me.neoblade298.neosky;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class IslandManager {
     static int indexer = 0;
-    private static List<Island> islands = new ArrayList<Island>(); // TODO: change to hashmap for index access
+    private static Map<Integer, Island> islands = new HashMap<Integer, Island>();
 
     public static Island createIsland(SkyPlayer owner) {
-        Island island = new Island(owner, indexer++);
-        islands.add(island);
+        Island island = new Island(owner, indexer);
+        islands.put(indexer, island);
+        indexer++;
         return island;
     }
 
+    public static void deleteIslandByIndex(int index) {
+        Island is = islands.remove(index);
+        if(is != null) is.cleanup();
+    }
+
     public static void deleteIsland(Island is) {
-        islands.remove(is);
+        islands.remove(is.getIndex());
         is.cleanup();
+    }
+
+    public static Island getIslandByIndex(int index) {
+        return islands.get(index);
+    }
+
+    public static Island getIslandByLocation(Location loc) {
+        return getIslandByIndex(Island.locationToIndex(loc));
     }
 
     public static void restrictPlayersToIslands() {
