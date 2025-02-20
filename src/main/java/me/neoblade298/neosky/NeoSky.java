@@ -18,13 +18,16 @@ import me.neoblade298.neosky.commands.CmdIslandDemote;
 import me.neoblade298.neosky.commands.CmdIslandJoin;
 import me.neoblade298.neosky.commands.CmdIslandLeave;
 import me.neoblade298.neosky.commands.CmdIslandNew;
+import me.neoblade298.neosky.commands.CmdIslandPermissions;
 import me.neoblade298.neosky.commands.CmdIslandPromote;
 import me.neoblade298.neosky.commands.CmdIslandSetSpawn;
 import me.neoblade298.neosky.commands.CmdIslandSetVisitorSpawn;
 import me.neoblade298.neosky.commands.CmdIslandSpawn;
+import me.neoblade298.neosky.commands.CmdIslandStudies;
 import me.neoblade298.neosky.commands.CmdIslandTrust;
 import me.neoblade298.neosky.commands.CmdIslandUnban;
 import me.neoblade298.neosky.commands.CmdIslandUntrust;
+import me.neoblade298.neosky.commands.CmdIslandUpgrades;
 import me.neoblade298.neosky.commands.CmdIslandVisit;
 import me.neoblade298.neosky.listeners.IslandBlockListener;
 import me.neoblade298.neosky.listeners.IslandEntityListener;
@@ -61,6 +64,9 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandDemote("demote", "Demote an island officer to member", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandTrust("trust", "Trust a visiting player", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandUntrust("untrust", "Untrust a visiting player", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandUpgrades("upgrades", "Opens upgrades menu", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandStudies("studies", "Opens studies menu", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdIslandPermissions("permissions", "Opens permissions menu", null, SubcommandRunner.PLAYER_ONLY));
         
         new SubcommandManager("nsa", "neosky.admin", NamedTextColor.AQUA, this).register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
 
