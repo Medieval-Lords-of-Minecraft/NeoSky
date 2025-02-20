@@ -22,6 +22,13 @@ public class Island {
     private Location spawn;
     private Location visitorSpawn;
 
+    private int hopperAmount = 0;
+    private int hopperLimit = 3;
+    private int pistonAmount = 0;
+    private int pistonLimit = 3;
+    private int redstoneAmount = 0;
+    private int redstoneLimit = 10;
+
     private SkyPlayer owner;
     private Set<SkyPlayer> officers = new HashSet<SkyPlayer>();
     private Set<SkyPlayer> members = new HashSet<SkyPlayer>();
@@ -99,6 +106,42 @@ public class Island {
         visitorPerms.canPickupItems = false;
         visitorPerms.canKillMobs = false;
         visitorPerms.canManage = false; // redundant
+    }
+
+    public int getHopperLimit() {
+        return hopperLimit;
+    }
+
+    public int getPistonLimit() {
+        return pistonLimit;
+    }
+
+    public int getRedstoneLimit() {
+        return redstoneLimit;
+    }
+
+    public int getHopperAmount() {
+        return hopperAmount;
+    }
+
+    public int getPistonAmount() {
+        return pistonAmount;
+    }
+
+    public int getRedstoneAmount() {
+        return redstoneAmount;
+    }
+
+    public void increaseHopperAmount(int amount) {
+        hopperAmount += amount;
+    }
+
+    public void increasePistonAmount(int amount) {
+        pistonAmount += amount;
+    }
+
+    public void increaseRedstoneAmount(int amount) {
+        redstoneAmount += amount;
     }
 
     public IslandPermissions getHighestPermission(SkyPlayer sp) {
