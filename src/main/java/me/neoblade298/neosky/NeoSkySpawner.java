@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class NeoSkySpawner {
     public static boolean isNeoSkySpawnerItem(ItemStack item) {
-        return item.getType() == Material.SPAWNER && item.hasItemMeta() && item.getItemMeta().hasEnchant(Enchantment.AQUA_AFFINITY);
+        return item != null && item.getType() == Material.SPAWNER
+        && item.hasItemMeta() && item.getItemMeta().hasEnchant(Enchantment.AQUA_AFFINITY);
     }
 }

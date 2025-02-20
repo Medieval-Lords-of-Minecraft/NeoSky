@@ -1,5 +1,6 @@
 package me.neoblade298.neosky.listeners;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Barrel;
@@ -36,11 +37,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandPermissions;
 import me.neoblade298.neosky.NeoSky;
+import me.neoblade298.neosky.NeoSkySpawner;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
 
@@ -125,7 +128,8 @@ public class IslandPlayerListener implements Listener {
         }
 
 		if(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK || action == Action.PHYSICAL) {
-            if(!is.containsLocation(e.getClickedBlock().getLocation(), 0) || is.isBanned(sp)) {
+            Location loc = e.getClickedBlock().getLocation();
+            if(!is.containsLocation(loc, 0) || is.isBanned(sp)) {
                 e.setCancelled(true);
                 return;
             }
@@ -139,6 +143,14 @@ public class IslandPlayerListener implements Listener {
             } else if(isDoor(blockData)) {
                 if(!perms.canUseDoors) {
                     e.setCancelled(true);
+                }
+            } else if (IslandBlockListener.isMarkedSpawner(loc)) {
+                ItemStack handItem = e.getItem();
+                if(handItem == null) {
+                    // TODO: print stack size in chat
+                } else if(perms.canBuild && NeoSkySpawner.isNeoSkySpawnerItem(handItem)) {
+                    e.setCancelled(true);
+                    // TODO: increase stack size
                 }
             } else {
                 if(!perms.canInteract) {
