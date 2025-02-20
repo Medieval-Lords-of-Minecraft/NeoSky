@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -35,6 +36,7 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.persistence.PersistentDataType;
 
+import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandPermissions;
 import me.neoblade298.neosky.NeoSky;
@@ -50,11 +52,19 @@ public class IslandBlockListener implements Listener {
     private static Map<Long, Set<Integer>> placedBlocks = new HashMap<Long, Set<Integer>>();
     private static Map<Long, Set<Integer>> neoSkySpawners = new HashMap<Long, Set<Integer>>();
 
+    private HashSet<Material> redstoneMats = new HashSet<>() {{
+        add(Material.REDSTONE_WIRE);
+        add(Material.STONE_BUTTON);
+        add(Material.REDSTONE_TORCH);
+        add(Material.REPEATER);
+    }};
+
     @EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
-        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
+        Player p = e.getPlayer();
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
         Island is = sp.getLocalIsland();
         if(is == null) return;
 
@@ -74,6 +84,7 @@ public class IslandBlockListener implements Listener {
             }
         }
 
+        blockBreakRestrictions(is, b);
         unmarkPlaced(b.getLocation());
         unmarkSpawner(b.getLocation());
 	}
@@ -82,7 +93,8 @@ public class IslandBlockListener implements Listener {
 	public void onBlockPlace(BlockPlaceEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         
-        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(e.getPlayer().getUniqueId());
+        Player p = e.getPlayer();
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
         Island is = sp.getLocalIsland();
         if(is == null) return;
 
@@ -110,6 +122,10 @@ public class IslandBlockListener implements Listener {
                 markSpawner(e.getBlockPlaced().getLocation());
             }
         }
+
+        Block b = e.getBlock();
+
+        blockPlaceRestrictions(is, p, b, e);
 	}
 
     @EventHandler
@@ -348,5 +364,66 @@ public class IslandBlockListener implements Listener {
         int relZ = (loc.getBlockZ() % 16 + 16) % 16;
         int relY = loc.getBlockY();
         return (relY & 0xFFFF) | ((relX & 0xFF) << 16) | ((relZ & 0xFF) << 24);
+    }
+
+    public void blockPlaceRestrictions(Island is, Player p, Block b, BlockPlaceEvent e) {
+        if(b == null) {
+            return;
+        }
+
+        Material m = b.getType();
+        
+        if (m == Material.HOPPER) {
+            if(is.getHopperAmount() < is.getHopperLimit()) {
+                is.increaseHopperAmount(1);
+            } else {
+                Util.msg(p, "Hopper Limit has been reached.");
+                e.setCancelled(true);
+            }
+        }
+
+        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
+            if(is.getPistonAmount() < is.getPistonLimit()) {
+                is.increasePistonAmount(1);
+            } else {
+                Util.msg(p, "Piston Limit has been reached.");
+                e.setCancelled(true);
+            }
+        }
+
+        if (redstoneMats.contains(m)) {
+            if(is.getRedstoneAmount() < is.getRedstoneLimit()) {
+                is.increaseRedstoneAmount(1);
+            } else {
+                Util.msg(p, "Redstone Limit has been reached.");
+                e.setCancelled(true);
+            }
+        }
+    }
+
+    public void blockBreakRestrictions(Island is, Block b) {
+        if(b == null) {
+            return;
+        }
+
+        Material m = b.getType();
+        
+        if (m == Material.HOPPER) {
+            if(is.getHopperAmount() > 0) {
+                is.increaseHopperAmount(-1);
+            } 
+        }
+
+        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
+            if(is.getPistonAmount() > 0) {
+                is.increasePistonAmount(-1);
+            }
+        }
+
+        if (redstoneMats.contains(m)) {
+            if(is.getRedstoneAmount() > 0) {
+                is.increaseRedstoneAmount(-1);
+            }
+        }
     }
 }
