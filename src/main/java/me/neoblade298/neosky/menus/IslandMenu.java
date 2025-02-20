@@ -61,12 +61,16 @@ public class IslandMenu extends CoreInventory {
 
         int slot = e.getSlot();
 
-        if (slot == UPGRADES_SLOT) {
-            new UpgradesMenu(p);
-        } else if (slot == STUDIES_SLOT) {
-            new StudiesMenu(p);
-        } else if (slot == PERMISSIONS_SLOT) {
-            new PermissionsMenu(p);
+        switch(slot) {
+            case UPGRADES_SLOT:
+                new UpgradesMenu(p);
+                break;
+            case STUDIES_SLOT:
+                new StudiesMenu(p);
+                break;
+            case PERMISSIONS_SLOT:
+                new PermissionsMenu(p);
+                break;
         }
     }
 
