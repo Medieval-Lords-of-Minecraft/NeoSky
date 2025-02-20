@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PigZapEvent;
+import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neosky.Island;
@@ -73,13 +74,21 @@ public class IslandEntityListener implements Listener {
                 e.setCancelled(true);
                 return;
             case SPAWNER:
-                // TODO: handle
+                // handled elsewhere
                 return;
             default:
                 // the rest are allowed
                 return;
         }
 	}
+
+    @EventHandler
+    public void onSpawnerSpawn(SpawnerSpawnEvent e) {
+        if(IslandBlockListener.isMarkedSpawner(e.getSpawner().getLocation())) {
+            e.getEntity().setGlowing(true);
+            // TODO: handle skymob spawn
+        }
+    }
 
     @EventHandler
     public void onEntityPlace(EntityPlaceEvent e) {
