@@ -43,6 +43,7 @@ import me.neoblade298.neosky.SkyPlayerManager;
 
 public class IslandBlockListener implements Listener {
     private static final NamespacedKey PLACED_BLOCK_KEY = new NamespacedKey(NeoSky.inst(), "placed_blocks");
+    private static final NamespacedKey SKYSPAWNER_BLOCK_KEY = new NamespacedKey(NeoSky.inst(), "skyspawners");
 
     private Map<Long, Set<Integer>> placedBlocks = new HashMap<Long, Set<Integer>>();
 
@@ -248,7 +249,7 @@ public class IslandBlockListener implements Listener {
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent e) {
         if(!NeoSky.isSkyWorld(e.getWorld())) return;
-        
+
         long chunkPos = encodeChunkPos(e.getChunk());
         if(!placedBlocks.containsKey(chunkPos)) return;
 

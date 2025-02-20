@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PigZapEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
@@ -113,20 +114,37 @@ public class IslandEntityListener implements Listener {
     public void onVoidDamage(EntityDamageEvent e) {
         if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
         if(e.getCause() != DamageCause.VOID) return;
+
+        e.setCancelled(true);
+
         if(e.getEntityType() == EntityType.PLAYER) {
             Player p = (Player)e.getEntity();
             SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
             Island is = sp.getLocalIsland();
             if(is == null) return;
 
-            e.setCancelled(true);
-            IslandManager.spawnPlayerToLocalIsland(p, is);
-            return;
+            new BukkitRunnable() {
+                public void run() {
+                    IslandManager.spawnPlayerToLocalIsland(p, is);
+                }
+            }.runTaskLater(NeoSky.inst(), 1); // stupid bug workaround
         } else {
-            e.setCancelled(true);
             e.getEntity().remove();
-            return;
         }
+    }
+
+    @EventHandler
+    public void onFallDamage(EntityDamageEvent e) {
+        if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
+        if(e.getCause() != DamageCause.FALL) return;
+        if(e.getEntityType() != EntityType.PLAYER) return;
+
+        Player p = (Player)e.getEntity();
+        SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
+        Island is = sp.getLocalIsland();
+        if(is == null) return;
+        
+        e.setCancelled(true);
     }
 
 	@EventHandler

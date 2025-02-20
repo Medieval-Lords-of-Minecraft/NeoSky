@@ -32,8 +32,7 @@ public class IslandManager {
     }
 
     public static void spawnPlayerToLocalIsland(Player p, Island is) {
-        p.setFallDistance(0);
-        if(is != SkyPlayerManager.getSkyPlayer(p.getUniqueId()).getMemberIsland()) {
+        if(!is.isMember(SkyPlayerManager.getSkyPlayer(p.getUniqueId()))) {
             is.spawnVisitorPlayer(p);
         } else {
             is.spawnPlayer(p);
