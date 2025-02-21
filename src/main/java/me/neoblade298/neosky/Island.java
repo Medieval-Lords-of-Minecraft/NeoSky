@@ -308,7 +308,7 @@ public class Island {
     }
 
     // threshold denotes extra room at the edge
-    public boolean containsLocation(Location loc, int threshold) {
+    public boolean containsLocation(Location loc, double threshold) {
         return loc.getX() < center.getX() + radius + threshold &&
             loc.getX() > center.getX() - radius - threshold &&
             loc.getZ() < center.getZ() + radius + threshold &&

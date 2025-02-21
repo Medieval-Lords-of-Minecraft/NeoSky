@@ -38,6 +38,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neosky.Island;
+import me.neoblade298.neosky.IslandManager;
 import me.neoblade298.neosky.IslandPermissions;
 import me.neoblade298.neosky.NeoSky;
 import me.neoblade298.neosky.NeoSkySpawner;
@@ -104,9 +105,8 @@ public class IslandBlockListener implements Listener {
             return;
         }
 
-        Location loc = e.getBlockPlaced().getLocation();
-
-        if(!is.containsLocation(loc, 0)) {
+        Location loc = e.getBlockPlaced().getLocation().add(0.5, -0.5, 0.5); // get center of placed block
+        if(!is.containsLocation(loc, 0)) { // double checking here for edge case
             e.setCancelled(true);
             return;
         }
@@ -147,6 +147,17 @@ public class IslandBlockListener implements Listener {
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
+
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        if(is != null) {
+            for(Block b : e.getBlocks()) {
+                Location newLoc = b.getRelative(e.getDirection()).getLocation();
+                if(!is.containsLocation(newLoc, 0)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        }
         
         for(Block b : e.getBlocks()) {
             unmarkPlaced(b.getLocation());

@@ -128,7 +128,7 @@ public class IslandPlayerListener implements Listener {
         }
 
 		if(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK || action == Action.PHYSICAL) {
-            Location loc = e.getClickedBlock().getLocation();
+            Location loc = e.getClickedBlock().getLocation().add(0.5, -0.5, 0.5); // get center of clicked block
             if(!is.containsLocation(loc, 0) || is.isBanned(sp)) {
                 e.setCancelled(true);
                 return;
