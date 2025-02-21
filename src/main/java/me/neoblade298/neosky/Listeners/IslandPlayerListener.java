@@ -37,7 +37,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTakeLecternBookEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.EquipmentSlot;
 
 import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neosky.Island;
@@ -128,12 +128,13 @@ public class IslandPlayerListener implements Listener {
         }
 
 		if(action == Action.LEFT_CLICK_BLOCK || action == Action.RIGHT_CLICK_BLOCK || action == Action.PHYSICAL) {
-            Location loc = e.getClickedBlock().getLocation().add(0.5, -0.5, 0.5); // get center of clicked block
-            if(!is.containsLocation(loc, 0) || is.isBanned(sp)) {
+            Location centerLoc = e.getClickedBlock().getLocation().add(0.5, -0.5, 0.5); // get center of clicked block
+            if(!is.containsLocation(centerLoc, 0) || is.isBanned(sp)) {
                 e.setCancelled(true);
                 return;
             }
 
+            Location loc = e.getClickedBlock().getLocation();
             BlockData blockData = e.getClickedBlock().getBlockData();
 
             if(isChest(blockData)) {
@@ -144,18 +145,11 @@ public class IslandPlayerListener implements Listener {
                 if(!perms.canUseDoors) {
                     e.setCancelled(true);
                 }
-            } else if (IslandBlockListener.isMarkedSpawner(loc)) {
-                ItemStack handItem = e.getItem();
-                if(handItem == null) {
-                    // TODO: print stack size in chat
-                } else if(perms.canBuild && NeoSkySpawner.isNeoSkySpawnerItem(handItem)) {
-                    e.setCancelled(true);
-                    // TODO: increase stack size
-                }
-            } else {
-                if(!perms.canInteract) {
-                    e.setCancelled(true);
-                }
+            } else if(!perms.canInteract) {
+                e.setCancelled(true);
+            } else if (NeoSkySpawner.isSpawner(loc)) {
+                if(e.getHand() == EquipmentSlot.OFF_HAND) return;
+                if(e.getItem() == null) Util.msg(e.getPlayer(), "Spawner Count: " + NeoSkySpawner.getSpawnerCount(loc));
             }
         }		
 	}

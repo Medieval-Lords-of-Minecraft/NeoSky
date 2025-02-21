@@ -21,6 +21,7 @@ import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
 import me.neoblade298.neosky.IslandPermissions;
 import me.neoblade298.neosky.NeoSky;
+import me.neoblade298.neosky.NeoSkySpawner;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
 
@@ -84,7 +85,7 @@ public class IslandEntityListener implements Listener {
 
     @EventHandler
     public void onSpawnerSpawn(SpawnerSpawnEvent e) {
-        if(IslandBlockListener.isMarkedSpawner(e.getSpawner().getLocation())) {
+        if(NeoSkySpawner.isSpawner(e.getSpawner().getLocation())) {
             e.getEntity().setGlowing(true);
             // TODO: handle skymob spawn
         }

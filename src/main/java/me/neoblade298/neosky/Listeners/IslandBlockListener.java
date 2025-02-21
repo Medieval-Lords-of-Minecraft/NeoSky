@@ -15,6 +15,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.spawner.SpawnRule;
 import org.bukkit.block.spawner.SpawnerEntry;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,6 +38,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.neoblade298.neosky.Island;
@@ -49,11 +51,9 @@ import me.neoblade298.neosky.SkyPlayerManager;
 
 public class IslandBlockListener implements Listener {
     private static final NamespacedKey PLACED_BLOCK_KEY = new NamespacedKey(NeoSky.inst(), "placed_blocks");
-    private static final NamespacedKey NEOSKY_SPAWNER_KEY = new NamespacedKey(NeoSky.inst(), "neosky_spawners");
 
     // TODO: only track placed study materials (for performance)
     private static Map<Long, Set<Integer>> placedBlocks = new HashMap<Long, Set<Integer>>();
-    private static Map<Long, Set<Integer>> neoSkySpawners = new HashMap<Long, Set<Integer>>();
 
     @EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
@@ -82,7 +82,16 @@ public class IslandBlockListener implements Listener {
 
         is.blockBreakRestrictions(b);
         unmarkPlaced(b.getLocation());
-        unmarkSpawner(b.getLocation());
+        
+        int spawnerCount = NeoSkySpawner.removeAllSpawners(b.getLocation());
+        if(spawnerCount > 0) {
+            e.setCancelled(true);
+            EntityType type = ((CreatureSpawner)b.getState()).getSpawnedType();
+            ItemStack item = NeoSkySpawner.getSpawnerItem(type, spawnerCount);
+            b.getWorld().dropItemNaturally(e.getPlayer().getLocation(), item);
+            b.setType(Material.AIR);
+            return;
+        }
 	}
 
     @EventHandler
@@ -100,12 +109,13 @@ public class IslandBlockListener implements Listener {
             return;
         }
 
-        Location loc = e.getBlockPlaced().getLocation().add(0.5, -0.5, 0.5); // get center of placed block
-        if(!is.containsLocation(loc, 0)) { // double checking here for edge case
+        Location locCenter = e.getBlockPlaced().getLocation().add(0.5, -0.5, 0.5); // get center of placed block
+        if(!is.containsLocation(locCenter, 0)) { // double checking here for edge case
             e.setCancelled(true);
             return;
         }
 
+        Location loc = e.getBlockPlaced().getLocation();
         markPlaced(loc);
 
         // removes spawn restrictions from spawner, keeps everything else
@@ -120,8 +130,14 @@ public class IslandBlockListener implements Listener {
             spawner.update(true);
 
             // handle neosky spawners specifically
-            if(NeoSkySpawner.isNeoSkySpawnerItem(e.getItemInHand())) {
-                markSpawner(e.getBlockPlaced().getLocation());
+            if(NeoSkySpawner.isSpawnerItem(e.getItemInHand())) {
+                Location placedAgainst = e.getBlockAgainst().getLocation();
+                if(NeoSkySpawner.isSpawner(placedAgainst)) {
+                    e.setCancelled(true); // don't place again, just stack
+                    NeoSkySpawner.addSpawner(placedAgainst);
+                } else {
+                    NeoSkySpawner.addSpawner(loc);
+                }
             }
         }
 
@@ -315,16 +331,6 @@ public class IslandBlockListener implements Listener {
             chunkSet.add(i);
         }
         placedBlocks.put(chunkPos, chunkSet);
-
-        // load neosky spawners
-        data = e.getChunk().getPersistentDataContainer().get(NEOSKY_SPAWNER_KEY, PersistentDataType.INTEGER_ARRAY);
-        if(data == null) return;
-
-        chunkSet = new HashSet<Integer>();
-        for(int i : data) {
-            chunkSet.add(i);
-        }
-        neoSkySpawners.put(chunkPos, chunkSet);
     }
 
     @EventHandler
@@ -338,38 +344,6 @@ public class IslandBlockListener implements Listener {
         Set<Integer> encodedBlocks = placedBlocks.remove(chunkPos);        
         int[] data = encodedBlocks.stream().mapToInt(Integer::intValue).toArray(); // thanks java this is trash
         e.getChunk().getPersistentDataContainer().set(PLACED_BLOCK_KEY, PersistentDataType.INTEGER_ARRAY, data);
-
-        // save neosky spawners
-        Set<Integer> encodedSpawners = neoSkySpawners.remove(chunkPos);  
-        data = encodedSpawners.stream().mapToInt(Integer::intValue).toArray(); // thanks java this is trash
-        e.getChunk().getPersistentDataContainer().set(NEOSKY_SPAWNER_KEY, PersistentDataType.INTEGER_ARRAY, data);
-    }
-
-    private static void markSpawner(Location loc) {
-        long chunkPos = encodeChunkPos(loc.getChunk());
-        Set<Integer> chunkSet;
-        if(neoSkySpawners.containsKey(chunkPos)) {
-            chunkSet = neoSkySpawners.get(chunkPos);
-        } else {
-            chunkSet = new HashSet<Integer>();
-            neoSkySpawners.put(chunkPos, chunkSet);
-        }
-
-        chunkSet.add(encodeSubChunkPos(loc));
-    }
-
-    private static void unmarkSpawner(Location loc) {
-        long chunkPos = encodeChunkPos(loc.getChunk());
-        if(!neoSkySpawners.containsKey(chunkPos)) return;
-        Set<Integer> chunkSet = neoSkySpawners.get(chunkPos);
-
-        chunkSet.remove(encodeSubChunkPos(loc));
-    }
-
-    public static boolean isMarkedSpawner(Location loc) {
-        long chunkPos = encodeChunkPos(loc.getChunk());
-        if(!neoSkySpawners.containsKey(chunkPos)) return false;
-        return neoSkySpawners.get(chunkPos).contains(encodeSubChunkPos(loc));
     }
 
     private static void markPlaced(Location loc) {
@@ -404,9 +378,6 @@ public class IslandBlockListener implements Listener {
     }
 
     private static int encodeSubChunkPos(Location loc) {
-        int relX = (loc.getBlockX() % 16 + 16) % 16;
-        int relZ = (loc.getBlockZ() % 16 + 16) % 16;
-        int relY = loc.getBlockY();
-        return (relY & 0xFFFF) | ((relX & 0xFF) << 16) | ((relZ & 0xFF) << 24);
+        return (loc.getBlockY() & 0xFFF) | ((loc.getBlockX() & 0xF) << 12) | ((loc.getBlockZ() & 0xF) << 16);
     }
 }
