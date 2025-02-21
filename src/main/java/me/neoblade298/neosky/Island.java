@@ -8,9 +8,13 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockPlaceEvent;
+
+import me.neoblade298.neocore.bukkit.util.Util;
 
 public class Island {
     private static final int MAX_ISLAND_RADIUS = 1; // chunks
@@ -28,6 +32,14 @@ public class Island {
     private int pistonLimit = 3;
     private int redstoneAmount = 0;
     private int redstoneLimit = 10;
+
+    private HashSet<Material> redstoneMats = new HashSet<>() {{
+        add(Material.REDSTONE_WIRE);
+        add(Material.REDSTONE);
+        add(Material.STONE_BUTTON);
+        add(Material.REDSTONE_TORCH);
+        add(Material.REPEATER);
+    }};
 
     private SkyPlayer owner;
     private Set<SkyPlayer> officers = new HashSet<SkyPlayer>();
@@ -106,42 +118,6 @@ public class Island {
         visitorPerms.canPickupItems = false;
         visitorPerms.canKillMobs = false;
         visitorPerms.canManage = false; // redundant
-    }
-
-    public int getHopperLimit() {
-        return hopperLimit;
-    }
-
-    public int getPistonLimit() {
-        return pistonLimit;
-    }
-
-    public int getRedstoneLimit() {
-        return redstoneLimit;
-    }
-
-    public int getHopperAmount() {
-        return hopperAmount;
-    }
-
-    public int getPistonAmount() {
-        return pistonAmount;
-    }
-
-    public int getRedstoneAmount() {
-        return redstoneAmount;
-    }
-
-    public void increaseHopperAmount(int amount) {
-        hopperAmount += amount;
-    }
-
-    public void increasePistonAmount(int amount) {
-        pistonAmount += amount;
-    }
-
-    public void increaseRedstoneAmount(int amount) {
-        redstoneAmount += amount;
     }
 
     public IslandPermissions getHighestPermission(SkyPlayer sp) {
@@ -332,5 +308,95 @@ public class Island {
         if(chunkX > MAX_ISLANDS_PER_ROW * islandWidth) return -1;
 
         return MAX_ISLANDS_PER_ROW * (chunkZ / islandWidth) + (chunkX / islandWidth);
+    }
+
+    public void blockPlaceRestrictions(Player p, Block b, BlockPlaceEvent e) {
+        if(b == null) {
+            return;
+        }
+
+        Material m = b.getType();
+        
+        if (m == Material.HOPPER) {
+            if(hopperAmount < hopperLimit) {
+                hopperAmount += 1;
+            } else {
+                Util.msg(p, "Hopper Limit has been reached. (" + hopperAmount + "/" + hopperLimit + ")");
+                e.setCancelled(true);
+            }
+        }
+
+        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
+            if(pistonAmount < pistonLimit) {
+                pistonAmount += 1;
+            } else {
+                Util.msg(p, "Piston Limit has been reached. (" + pistonAmount + "/" + pistonLimit + ")");
+                e.setCancelled(true);
+            }
+        }
+
+        if (redstoneMats.contains(m)) {
+            if(redstoneAmount < redstoneLimit) {
+                redstoneAmount += 1;
+            } else {
+                Util.msg(p, "Redstone Limit has been reached. (" + redstoneAmount + "/" + redstoneLimit + ")");
+                e.setCancelled(true);
+            }
+        }
+    }
+
+    public void blockBreakRestrictions(Block b) {
+        if(b == null) {
+            return;
+        }
+
+        Material m = b.getType();
+
+        if(m == null) {
+            return;
+        }
+        
+        if (m == Material.HOPPER) {
+            if(hopperAmount > 0) {
+                hopperAmount -= 1;
+            } 
+        }
+
+        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
+            if(pistonAmount > 0) {
+                pistonAmount -= 1;
+            }
+        }
+
+        if (redstoneMats.contains(m)) {
+            if(redstoneAmount > 0) {
+                redstoneAmount -= 1;
+            }
+        }
+    }
+
+
+    public void blockBreakRestrictions(Material m) {
+        if(m == null) {
+            return;
+        }
+        
+        if (m == Material.HOPPER) {
+            if(hopperAmount > 0) {
+                hopperAmount -= 1;
+            } 
+        }
+
+        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
+            if(pistonAmount > 0) {
+                pistonAmount -= 1;
+            }
+        }
+
+        if (redstoneMats.contains(m)) {
+            if(redstoneAmount > 0) {
+                redstoneAmount -= 1;
+            }
+        }
     }
 }
