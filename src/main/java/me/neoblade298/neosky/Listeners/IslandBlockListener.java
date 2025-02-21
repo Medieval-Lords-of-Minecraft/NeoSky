@@ -104,7 +104,14 @@ public class IslandBlockListener implements Listener {
             return;
         }
 
-        markPlaced(e.getBlockPlaced().getLocation());
+        Location loc = e.getBlockPlaced().getLocation();
+
+        if(!is.containsLocation(loc, 0)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        markPlaced(loc);
 
         // removes spawn restrictions from spawner, keeps everything else
         if(e.getBlockPlaced().getState() instanceof CreatureSpawner spawner) {
