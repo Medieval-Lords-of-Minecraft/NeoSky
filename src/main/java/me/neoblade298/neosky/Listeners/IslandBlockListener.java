@@ -156,8 +156,7 @@ public class IslandBlockListener implements Listener {
         
         for(Block b : e.getBlocks()) {
             unmarkPlaced(b.getLocation());
-            Island is = IslandManager.getIslandByLocation(b.getLocation());
-            if(b.getPistonMoveReaction() == PistonMoveReaction.BREAK) {
+            if(is != null && b.getPistonMoveReaction() == PistonMoveReaction.BREAK) {
                 is.blockBreakRestrictions(b);
             }
         }
