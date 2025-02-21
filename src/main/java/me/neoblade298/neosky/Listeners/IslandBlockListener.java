@@ -12,13 +12,16 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.spawner.SpawnRule;
 import org.bukkit.block.spawner.SpawnerEntry;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -36,8 +39,8 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-import me.neoblade298.neocore.bukkit.util.Util;
 import me.neoblade298.neosky.Island;
+import me.neoblade298.neosky.IslandManager;
 import me.neoblade298.neosky.IslandPermissions;
 import me.neoblade298.neosky.NeoSky;
 import me.neoblade298.neosky.NeoSkySpawner;
@@ -51,13 +54,6 @@ public class IslandBlockListener implements Listener {
     // TODO: only track placed study materials (for performance)
     private static Map<Long, Set<Integer>> placedBlocks = new HashMap<Long, Set<Integer>>();
     private static Map<Long, Set<Integer>> neoSkySpawners = new HashMap<Long, Set<Integer>>();
-
-    private HashSet<Material> redstoneMats = new HashSet<>() {{
-        add(Material.REDSTONE_WIRE);
-        add(Material.STONE_BUTTON);
-        add(Material.REDSTONE_TORCH);
-        add(Material.REPEATER);
-    }};
 
     @EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
@@ -84,7 +80,7 @@ public class IslandBlockListener implements Listener {
             }
         }
 
-        blockBreakRestrictions(is, b);
+        is.blockBreakRestrictions(b);
         unmarkPlaced(b.getLocation());
         unmarkSpawner(b.getLocation());
 	}
@@ -125,7 +121,7 @@ public class IslandBlockListener implements Listener {
 
         Block b = e.getBlock();
 
-        blockPlaceRestrictions(is, p, b, e);
+        is.blockPlaceRestrictions(p, b, e);
 	}
 
     @EventHandler
@@ -143,6 +139,10 @@ public class IslandBlockListener implements Listener {
         
         for(Block b : e.getBlocks()) {
             unmarkPlaced(b.getLocation());
+            Island is = IslandManager.getIslandByLocation(b.getLocation());
+            if(b.getPistonMoveReaction() == PistonMoveReaction.BREAK) {
+                is.blockBreakRestrictions(b);
+            }
         }
         // need to remove all first then add all
         for(Block b : e.getBlocks()) {
@@ -158,6 +158,8 @@ public class IslandBlockListener implements Listener {
 
         for(Block b : e.getBlocks()) {
             unmarkPlaced(b.getLocation());
+            Island is = IslandManager.getIslandByLocation(b.getLocation());
+            is.blockBreakRestrictions(b);
         }
         // need to remove all first then add all
         for(Block b : e.getBlocks()) {
@@ -210,6 +212,8 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getLocation().getWorld())) return;
         
         for(Block b : e.blockList()) {
+            Island is = IslandManager.getIslandByLocation(b.getLocation());
+            is.blockBreakRestrictions(b);
             unmarkPlaced(b.getLocation());
         }
     }
@@ -218,36 +222,60 @@ public class IslandBlockListener implements Listener {
     public void onFade(BlockFadeEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
     public void onForm(BlockFormEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getBlock());
+    }
+
+    @EventHandler
+    public void onBlockDrop(BlockDropItemEvent e) {
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
+        unmarkPlaced(e.getBlock().getLocation());
+        Island is;
+        for(Item i : e.getItems()) {
+            Material m = i.getItemStack().getType();
+            is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+            is.blockBreakRestrictions(m);
+        }
     }
 
     @EventHandler
     public void onFlow(BlockFromToEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getToBlock());
     }
 
     @EventHandler
     public void onGrow(BlockGrowEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
     public void onSpread(BlockSpreadEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
     public void onForm(EntityBlockFormEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
@@ -364,66 +392,5 @@ public class IslandBlockListener implements Listener {
         int relZ = (loc.getBlockZ() % 16 + 16) % 16;
         int relY = loc.getBlockY();
         return (relY & 0xFFFF) | ((relX & 0xFF) << 16) | ((relZ & 0xFF) << 24);
-    }
-
-    public void blockPlaceRestrictions(Island is, Player p, Block b, BlockPlaceEvent e) {
-        if(b == null) {
-            return;
-        }
-
-        Material m = b.getType();
-        
-        if (m == Material.HOPPER) {
-            if(is.getHopperAmount() < is.getHopperLimit()) {
-                is.increaseHopperAmount(1);
-            } else {
-                Util.msg(p, "Hopper Limit has been reached.");
-                e.setCancelled(true);
-            }
-        }
-
-        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
-            if(is.getPistonAmount() < is.getPistonLimit()) {
-                is.increasePistonAmount(1);
-            } else {
-                Util.msg(p, "Piston Limit has been reached.");
-                e.setCancelled(true);
-            }
-        }
-
-        if (redstoneMats.contains(m)) {
-            if(is.getRedstoneAmount() < is.getRedstoneLimit()) {
-                is.increaseRedstoneAmount(1);
-            } else {
-                Util.msg(p, "Redstone Limit has been reached.");
-                e.setCancelled(true);
-            }
-        }
-    }
-
-    public void blockBreakRestrictions(Island is, Block b) {
-        if(b == null) {
-            return;
-        }
-
-        Material m = b.getType();
-        
-        if (m == Material.HOPPER) {
-            if(is.getHopperAmount() > 0) {
-                is.increaseHopperAmount(-1);
-            } 
-        }
-
-        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
-            if(is.getPistonAmount() > 0) {
-                is.increasePistonAmount(-1);
-            }
-        }
-
-        if (redstoneMats.contains(m)) {
-            if(is.getRedstoneAmount() > 0) {
-                is.increaseRedstoneAmount(-1);
-            }
-        }
     }
 }
