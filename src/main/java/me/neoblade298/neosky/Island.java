@@ -1,7 +1,9 @@
 package me.neoblade298.neosky;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -55,8 +57,12 @@ public class Island {
     private IslandPermissions visitorPerms = new IslandPermissions();
 
     private int radius;
+    private int maxMobStackSize;
 
     private IslandStudy islandStudy = new IslandStudy();
+
+    private Map<EntityType, Integer> mobStacks = new HashMap<EntityType, Integer>();
+    private Map<EntityType, Integer> skySpawners = new HashMap<EntityType, Integer>(); // physical only
 
     public Island(SkyPlayer owner, int index) {
         this.owner = owner;
@@ -75,6 +81,7 @@ public class Island {
         visitorSpawn = spawn;
 
         radius = 10; // TODO: load from config
+        maxMobStackSize = 10;
 
         loadPerms();
 
@@ -254,6 +261,42 @@ public class Island {
         return islandStudy;
     }
 
+    public void addMobStack(EntityType type) {
+        int newAmount = mobStacks.getOrDefault(type, 0) + 1;
+        mobStacks.put(type, newAmount);
+    }
+
+    public void removeMobStack(EntityType type) {
+        int newAmount = mobStacks.getOrDefault(type, 0) - 1;
+        if(newAmount <= 0) mobStacks.remove(type);
+        else mobStacks.put(type, newAmount);
+    }
+
+    public int getMobStackCount(EntityType type) {
+        return mobStacks.getOrDefault(type, 0);
+    }
+
+    public int getMaxMobStackSize(EntityType type) {
+        int mobStackCnt = mobStacks.getOrDefault(type, 0);
+        int spawnerCnt = skySpawners.getOrDefault(type, 1); // should never be 0 if this is called
+        return maxMobStackSize / Math.max(mobStackCnt, spawnerCnt);
+    }
+
+    public void addSkySpawner(EntityType type) {
+        int newAmount = skySpawners.getOrDefault(type, 0) + 1;
+        skySpawners.put(type, newAmount);
+    }
+
+    public void removeSkySpawner(EntityType type) {
+        int newAmount = skySpawners.getOrDefault(type, 0) - 1;
+        if(newAmount <= 0) skySpawners.remove(type);
+        else skySpawners.put(type, newAmount);
+    }
+
+    public int getSkySpawnerCount(EntityType type) {
+        return skySpawners.getOrDefault(type, 0);
+    }
+
     public void cleanup() {
         for(SkyPlayer sp : members) {
             sp.setMemberIsland(null);
@@ -280,7 +323,7 @@ public class Island {
             if(e.getType() != EntityType.PLAYER) e.remove();
         }
 
-        // TODO: cleanup custom/special stuff
+        // TODO: cleanup custom/special stuff (e.g. marked blocks)
     }
 
     // threshold denotes extra room at the edge

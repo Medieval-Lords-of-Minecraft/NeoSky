@@ -82,15 +82,31 @@ public class IslandBlockListener implements Listener {
 
         is.blockBreakRestrictions(b);
         unmarkPlaced(b.getLocation());
-        
-        int spawnerCount = NeoSkySpawner.removeAllSpawners(b.getLocation());
-        if(spawnerCount > 0) {
+
+        Location loc = b.getLocation();
+
+        if(NeoSkySpawner.isSpawner(loc)) {
+            int removedSpawnerCount, remainingSpawnerCount;
+            if(p.isSneaking()) {
+                removedSpawnerCount = NeoSkySpawner.removeAllSpawners(loc);
+                remainingSpawnerCount = 0;
+            } else {
+                removedSpawnerCount = NeoSkySpawner.removeSpawners(loc, 64);
+                remainingSpawnerCount = NeoSkySpawner.getSpawnerCount(loc);
+            }
+
             e.setCancelled(true);
             EntityType type = ((CreatureSpawner)b.getState()).getSpawnedType();
-            ItemStack item = NeoSkySpawner.getSpawnerItem(type, spawnerCount);
+            ItemStack item = NeoSkySpawner.getSpawnerItem(type, removedSpawnerCount);
             b.getWorld().dropItemNaturally(e.getPlayer().getLocation(), item);
-            b.setType(Material.AIR);
-            return;
+
+            if(remainingSpawnerCount == 0) {
+                b.setType(Material.AIR);
+                is.removeSkySpawner(type);
+                unmarkPlaced(loc);
+            }
+        } else {
+            unmarkPlaced(loc); // always unmark non-skyspawners
         }
 	}
 
@@ -116,11 +132,13 @@ public class IslandBlockListener implements Listener {
         }
 
         Location loc = e.getBlockPlaced().getLocation();
-        markPlaced(loc);
 
         // removes spawn restrictions from spawner, keeps everything else
         if(e.getBlockPlaced().getState() instanceof CreatureSpawner spawner) {
-            if(spawner.getSpawnedEntity() == null) return;
+            if(spawner.getSpawnedEntity() == null) {
+                e.setCancelled(true);
+                return;
+            }
 
             // applies to all spawners
             SpawnRule rule = new SpawnRule(0, 15, 0, 15);
@@ -132,13 +150,30 @@ public class IslandBlockListener implements Listener {
             // handle neosky spawners specifically
             if(NeoSkySpawner.isSpawnerItem(e.getItemInHand())) {
                 Location placedAgainst = e.getBlockAgainst().getLocation();
+
+                Location stackLoc;
                 if(NeoSkySpawner.isSpawner(placedAgainst)) {
+                    stackLoc = placedAgainst;
                     e.setCancelled(true); // don't place again, just stack
-                    NeoSkySpawner.addSpawner(placedAgainst);
                 } else {
-                    NeoSkySpawner.addSpawner(loc);
+                    stackLoc = loc;
+                    is.addSkySpawner(spawner.getSpawnedType());
+                    markPlaced(stackLoc);
                 }
+
+                int amtInHand = e.getItemInHand().getAmount();
+                if(e.getPlayer().isSneaking()) {
+                    NeoSkySpawner.addSpawners(stackLoc, amtInHand);
+                    e.getItemInHand().setAmount(0);
+                } else {
+                    NeoSkySpawner.addSpawners(stackLoc, 1);
+                    e.getItemInHand().setAmount(amtInHand - 1);
+                }
+            } else {
+                markPlaced(loc); // always mark regular spawners
             }
+        } else {
+            markPlaced(loc); // always mark non-spawners
         }
 
         Block b = e.getBlock();
@@ -243,6 +278,8 @@ public class IslandBlockListener implements Listener {
     public void onExplode(EntityExplodeEvent e) {
         if(!NeoSky.isSkyWorld(e.getLocation().getWorld())) return;
         
+        e.blockList().removeIf(x -> NeoSkySpawner.isSpawner(x.getLocation())); // make skyspawners immune
+
         for(Block b : e.blockList()) {
             Island is = IslandManager.getIslandByLocation(b.getLocation());
             is.blockBreakRestrictions(b);

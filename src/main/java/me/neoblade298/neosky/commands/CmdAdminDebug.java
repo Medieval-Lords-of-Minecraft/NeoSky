@@ -13,8 +13,8 @@ import me.neoblade298.neosky.SkyPlayerManager;
 import me.neoblade298.neosky.study.OreStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
 
-public class CmdIslandDebug extends Subcommand {
-    public CmdIslandDebug(String key, String desc, String perm, SubcommandRunner runner) {
+public class CmdAdminDebug extends Subcommand {
+    public CmdAdminDebug(String key, String desc, String perm, SubcommandRunner runner) {
         super(key, desc, perm, runner);
     }
 

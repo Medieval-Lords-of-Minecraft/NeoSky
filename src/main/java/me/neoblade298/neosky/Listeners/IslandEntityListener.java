@@ -61,16 +61,21 @@ public class IslandEntityListener implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent e) {
         if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
-        if(!(e.getDamageSource().getCausingEntity() instanceof Player p)) return;
+        
+        Entity entity = e.getEntity();
+        int stackSize = entity.getPersistentDataContainer().getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, -1);
+        if(stackSize == -1) return; // don't care about non-skymobs (maybe future feature?)
+
+        if(!(e.getDamageSource().getCausingEntity() instanceof Player p)) {
+            e.setCancelled(true);
+            return;
+        }
 
         SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
         Island is = sp.getLocalIsland();
         if(is == null) return;
 
-        Entity entity = e.getEntity();
-        int stackSize = entity.getPersistentDataContainer().getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, 1);
         stackSize--;
-
         if(stackSize > 0) {
             entity.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
             entity.customName(Component.text("x" + stackSize));
@@ -78,9 +83,9 @@ public class IslandEntityListener implements Listener {
                 entity.getWorld().dropItemNaturally(p.getLocation(), i);
             }
             e.setCancelled(true);
-        }
+        } else is.removeMobStack(entity.getType());
 
-        // TODO: handle mob study and stacked mob decrease
+        // TODO: handle mob study
     }
 	
 	@EventHandler
@@ -112,25 +117,46 @@ public class IslandEntityListener implements Listener {
     @EventHandler
     public void onSpawnerSpawn(SpawnerSpawnEvent e) {
         Location loc = e.getSpawner().getLocation();
-        if(NeoSkySpawner.isSpawner(loc)) {
-            Entity entity = e.getEntity();
+        if(!NeoSkySpawner.isSpawner(loc)) return;
 
-            for(Entity nearby : entity.getNearbyEntities(16, 16, 16)) {
-                if(nearby.getType() == entity.getType()) {
-                    e.setCancelled(true);
-                    int stackSize = nearby.getPersistentDataContainer().getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, 1);
-                    stackSize += NeoSkySpawner.getSpawnerCount(loc);
-                    nearby.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
-                    nearby.customName(Component.text("x" + stackSize));
-                    return;
-                }
+        Island is = IslandManager.getIslandByLocation(loc);
+        if(is == null) return;
+
+        Entity entity = e.getEntity();
+        EntityType type = entity.getType();
+        int maxStackSize = is.getMaxMobStackSize(type);
+
+        // try to find existing stack
+        for(Entity nearby : entity.getNearbyEntities(8, 8, 8)) { // TODO: magic numbers
+            if(nearby.getType() == type) {
+                int stackSize = nearby.getPersistentDataContainer().getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, -1);
+                if(stackSize == -1) continue; // don't stack with non-skymobs
+
+                e.setCancelled(true);
+
+                if(stackSize >= maxStackSize) return; // don't spawn when capped
+
+                stackSize += NeoSkySpawner.getSpawnerCount(loc);
+                if(stackSize > maxStackSize) stackSize = maxStackSize; // cap
+
+                nearby.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
+                nearby.customName(Component.text("x" + stackSize));
+
+                return;
             }
+        }
 
-            // only do these on a newly spawned mob
+        // no existing stack found so try to create a new one
+        if(is.getSkySpawnerCount(type) > is.getMobStackCount(type)) {
+            int startStackSize = NeoSkySpawner.getSpawnerCount(loc);
+            if(startStackSize > maxStackSize) startStackSize = maxStackSize; // cap
             entity.setPersistent(true);
             entity.setCustomNameVisible(true);
-            entity.customName(Component.text("x1"));
-            entity.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, 1);
+            entity.customName(Component.text("x" + startStackSize));
+            entity.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, startStackSize);
+            is.addMobStack(type);
+        } else {
+            e.setCancelled(true); // prevent new stack
         }
     }
 
@@ -170,7 +196,8 @@ public class IslandEntityListener implements Listener {
 
         e.setCancelled(true);
 
-        if(e.getEntityType() == EntityType.PLAYER) {
+        EntityType type = e.getEntityType();
+        if(type == EntityType.PLAYER) {
             Player p = (Player)e.getEntity();
             SkyPlayer sp = SkyPlayerManager.getSkyPlayer(p.getUniqueId());
             Island is = sp.getLocalIsland();
@@ -182,6 +209,12 @@ public class IslandEntityListener implements Listener {
                 }
             }.runTaskLater(NeoSky.inst(), 1); // stupid bug workaround
         } else {
+            Entity entity = e.getEntity();
+            if(entity.getPersistentDataContainer().get(NEOSKY_MOB_KEY, PersistentDataType.INTEGER) != null) {
+                Island is = IslandManager.getIslandByLocation(entity.getLocation());
+                if(is != null) is.removeMobStack(type);
+            }
+
             e.getEntity().remove();
         }
     }

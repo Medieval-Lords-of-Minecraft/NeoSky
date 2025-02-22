@@ -10,9 +10,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.neoblade298.neocore.bukkit.commands.SubcommandManager;
 import me.neoblade298.neocore.shared.commands.SubcommandRunner;
+import me.neoblade298.neosky.commands.CmdAdminDebug;
+import me.neoblade298.neosky.commands.CmdAdminSpawner;
 import me.neoblade298.neosky.commands.CmdIsland;
 import me.neoblade298.neosky.commands.CmdIslandBan;
-import me.neoblade298.neosky.commands.CmdIslandDebug;
 import me.neoblade298.neosky.commands.CmdIslandDelete;
 import me.neoblade298.neosky.commands.CmdIslandDemote;
 import me.neoblade298.neosky.commands.CmdIslandJoin;
@@ -68,7 +69,9 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandStudies("studies", "Opens studies menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandPermissions("permissions", "Opens permissions menu", null, SubcommandRunner.PLAYER_ONLY));
         
-        new SubcommandManager("nsa", "neosky.admin", NamedTextColor.AQUA, this).register(new CmdIslandDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
+        mgr = new SubcommandManager("nsa", "neosky.admin", NamedTextColor.AQUA, this);
+        mgr.register(new CmdAdminDebug("debug", "Debug command", "neosky.admin", SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdAdminSpawner("spawner", "Give specified spawner", "neosky.admin", SubcommandRunner.PLAYER_ONLY));
 
         Bukkit.getPluginManager().registerEvents(new IslandBlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new IslandEntityListener(), this);
