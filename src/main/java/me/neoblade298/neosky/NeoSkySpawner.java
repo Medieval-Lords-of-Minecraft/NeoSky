@@ -30,10 +30,12 @@ public class NeoSkySpawner {
         BlockStateMeta meta = (BlockStateMeta)item.getItemMeta();
         CreatureSpawner spawner = (CreatureSpawner)meta.getBlockState();
         spawner.setSpawnedType(type);
+        
+        meta.setBlockState(spawner);
         meta.addEnchant(Enchantment.AQUA_AFFINITY, 5, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         meta.customName(Component.text("SkySpawner (" + type.toString() + ")")); // TODO: prettify
-        meta.setBlockState(spawner);
+
         item.setItemMeta(meta);
         
         return item;

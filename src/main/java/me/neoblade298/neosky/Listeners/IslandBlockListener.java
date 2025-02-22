@@ -39,6 +39,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.neoblade298.neosky.Island;
@@ -135,6 +136,11 @@ public class IslandBlockListener implements Listener {
 
         // removes spawn restrictions from spawner, keeps everything else
         if(e.getBlockPlaced().getState() instanceof CreatureSpawner spawner) {
+            BlockStateMeta meta = (BlockStateMeta)e.getItemInHand().getItemMeta();
+            CreatureSpawner itemSpawner = (CreatureSpawner)meta.getBlockState();
+            spawner.setSpawnedType(itemSpawner.getSpawnedType());
+            spawner.update(true);
+
             if(spawner.getSpawnedEntity() == null) {
                 e.setCancelled(true);
                 return;
