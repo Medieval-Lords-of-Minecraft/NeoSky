@@ -151,6 +151,7 @@ public class IslandEntityListener implements Listener {
             int startStackSize = NeoSkySpawner.getSpawnerCount(loc);
             if(startStackSize > maxStackSize) startStackSize = maxStackSize; // cap
             entity.setPersistent(true);
+            if(entity instanceof LivingEntity living) living.setAI(false);
             entity.setCustomNameVisible(true);
             entity.customName(Component.text("x" + startStackSize));
             entity.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, startStackSize);
