@@ -2,6 +2,7 @@ package me.neoblade298.neosky.listeners;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,9 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.block.spawner.SpawnRule;
 import org.bukkit.block.spawner.SpawnerEntry;
 import org.bukkit.entity.EntityType;
@@ -199,28 +200,8 @@ public class IslandBlockListener implements Listener {
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
-
-        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        if(is != null) {
-            for(Block b : e.getBlocks()) {
-                Location newLoc = b.getRelative(e.getDirection()).getLocation();
-                if(!is.containsLocation(newLoc, 0)) {
-                    e.setCancelled(true);
-                    return;
-                }
-            }
-        }
         
-        for(Block b : e.getBlocks()) {
-            unmarkPlaced(b.getLocation());
-            if(is != null && b.getPistonMoveReaction() == PistonMoveReaction.BREAK) {
-                is.blockBreakRestrictions(b);
-            }
-        }
-        // need to remove all first then add all
-        for(Block b : e.getBlocks()) {
-            markPlaced(b.getRelative(e.getDirection()).getLocation());
-        }
+        handlePistonMoveBlock(e.getBlocks(), e.getDirection());
     }
 
     @EventHandler
@@ -229,15 +210,34 @@ public class IslandBlockListener implements Listener {
         
         if(!e.isSticky()) return;
 
-        for(Block b : e.getBlocks()) {
+        handlePistonMoveBlock(e.getBlocks(), e.getDirection());
+    }
+
+    // returns true if movement should be cancelled
+    private boolean handlePistonMoveBlock(List<Block> blocks, BlockFace direction) {
+        Island is = IslandManager.getIslandByLocation(blocks.getFirst().getLocation());
+        if(is == null) return false;
+
+        for(Block b : blocks) {
+            Location newLoc = b.getRelative(direction).getLocation();
+            if(!is.containsLocation(newLoc, 0)) {
+                return true;
+            }
+        }
+
+        blocks = blocks.stream().filter(x -> isMarkedPlaced(x.getLocation())).toList();
+
+        for(Block b : blocks) {
             unmarkPlaced(b.getLocation());
-            Island is = IslandManager.getIslandByLocation(b.getLocation());
             is.blockBreakRestrictions(b);
         }
+
         // need to remove all first then add all
-        for(Block b : e.getBlocks()) {
-            markPlaced(b.getRelative(e.getDirection()).getLocation());
+        for(Block b : blocks) {
+            markPlaced(b.getRelative(direction).getLocation());
         }
+
+        return false;
     }
 
     @EventHandler
