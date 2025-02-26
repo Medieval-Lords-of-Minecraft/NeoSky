@@ -10,7 +10,7 @@ import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
-import me.neoblade298.neosky.study.OreStudyItem;
+import me.neoblade298.neosky.study.MobStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
 
 public class CmdAdminDebug extends Subcommand {
@@ -25,16 +25,16 @@ public class CmdAdminDebug extends Subcommand {
         Island is = sp.getMemberIsland();
         if(is == null) return;
 
-        if(!is.getIslandStudy().isStudyUnlocked(Material.COBBLESTONE)) {
-            StudyItem study = new OreStudyItem();
-            study.item = Material.COBBLESTONE;
-            study.levelRequirements = new int[] {5, 10};
+        if(!is.getIslandStudy().isStudyUnlocked(Material.PIG_SPAWN_EGG)) {
+            StudyItem study = new MobStudyItem();
+            study.item = Material.PIG_SPAWN_EGG;
+            study.levelRequirements = new int[] {5, 10, 15};
             StudyItem.createItem(study);
-            is.getIslandStudy().unlockStudy(Material.COBBLESTONE);
+            is.getIslandStudy().unlockStudy(study.item);
         }
 
-        Util.msg(sender, "Cobble study amt: " + is.getIslandStudy().getStudyAmount(Material.COBBLESTONE));
-        Util.msg(sender, "Cobble study lvl: " + is.getIslandStudy().getStudyLevel(Material.COBBLESTONE));
+        Util.msg(sender, "Pig study amt: " + is.getIslandStudy().getStudyAmount(Material.PIG_SPAWN_EGG));
+        Util.msg(sender, "Pig study lvl: " + is.getIslandStudy().getStudyLevel(Material.PIG_SPAWN_EGG));
     }
 
 }
