@@ -30,6 +30,8 @@ public class Island {
 
     private int hopperAmount = 0;
     private int hopperLimit = 3;
+    private int spawnerAmount = 0;
+    private int spawnerLimit = 3;
     private int pistonAmount = 0;
     private int pistonLimit = 3;
     private int redstoneAmount = 0;
@@ -378,6 +380,15 @@ public class Island {
             }
         }
 
+        if (m == Material.SPAWNER) {
+            if(spawnerAmount < spawnerLimit) {
+                spawnerAmount += 1;
+            } else {
+                Util.msg(p, "Spawner Limit has been reached. (" + spawnerAmount + "/" + spawnerLimit + ")");
+                e.setCancelled(true);
+            }
+        }
+
         if (redstoneMats.contains(m)) {
             if(redstoneAmount < redstoneLimit) {
                 redstoneAmount += 1;
@@ -411,6 +422,12 @@ public class Island {
             }
         }
 
+        if (m == Material.SPAWNER) {
+            if(spawnerAmount > 0) {
+                spawnerAmount -= 1;
+            }
+        }
+
         if (redstoneMats.contains(m)) {
             if(redstoneAmount > 0) {
                 redstoneAmount -= 1;
@@ -433,6 +450,12 @@ public class Island {
         if (m == Material.PISTON || m == Material.STICKY_PISTON) {
             if(pistonAmount > 0) {
                 pistonAmount -= 1;
+            }
+        }
+
+        if (m == Material.SPAWNER) {
+            if(spawnerAmount > 0) {
+                spawnerAmount -= 1;
             }
         }
 

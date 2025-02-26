@@ -17,13 +17,11 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.spawner.SpawnRule;
 import org.bukkit.block.spawner.SpawnerEntry;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -73,6 +71,7 @@ public class IslandBlockListener implements Listener {
         }
 
         Block b = e.getBlock();
+        
 
         if(is == sp.getMemberIsland() && e.isDropItems()) {
             if(!isMarkedPlaced(b.getLocation())) { // no study if placed by player
@@ -298,7 +297,7 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        is.blockBreakRestrictions(e.getBlock());
+        if (is != null ) is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
@@ -306,19 +305,7 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        is.blockBreakRestrictions(e.getBlock());
-    }
-
-    @EventHandler
-    public void onBlockDrop(BlockDropItemEvent e) {
-        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
-        unmarkPlaced(e.getBlock().getLocation());
-        Island is;
-        for(Item i : e.getItems()) {
-            Material m = i.getItemStack().getType();
-            is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-            is.blockBreakRestrictions(m);
-        }
+        if (is != null ) is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
