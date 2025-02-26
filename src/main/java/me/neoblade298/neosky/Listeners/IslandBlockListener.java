@@ -303,9 +303,17 @@ public class IslandBlockListener implements Listener {
     @EventHandler
     public void onForm(BlockFormEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
-        unmarkPlaced(e.getBlock().getLocation());
+        
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        if (is != null ) is.blockBreakRestrictions(e.getBlock());
+        if(is == null) return;
+
+        if(!is.containsLocation(e.getBlock().getLocation(), 0)) {
+            e.setCancelled(true);
+            return;
+        }
+
+        unmarkPlaced(e.getBlock().getLocation());
+        is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
