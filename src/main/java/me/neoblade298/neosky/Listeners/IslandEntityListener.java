@@ -160,7 +160,6 @@ public class IslandEntityListener implements Listener {
 
             if(entity instanceof LivingEntity living) {
                 living.setCanPickupItems(false);
-                living.setCollidable(false);
                 if(living instanceof Mob mob) {
                     mob.setAggressive(false);
                     mob.setAware(false);
