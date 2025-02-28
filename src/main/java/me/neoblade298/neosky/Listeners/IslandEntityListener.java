@@ -1,10 +1,12 @@
 package me.neoblade298.neosky.listeners;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WindCharge;
 import org.bukkit.event.EventHandler;
@@ -19,6 +21,7 @@ import org.bukkit.event.entity.EntityPlaceEvent;
 import org.bukkit.event.entity.PigZapEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -29,6 +32,7 @@ import me.neoblade298.neosky.NeoSky;
 import me.neoblade298.neosky.NeoSkySpawner;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
+import me.neoblade298.neosky.study.MobStudyItem;
 import net.kyori.adventure.text.Component;
 
 public class IslandEntityListener implements Listener {
@@ -63,7 +67,8 @@ public class IslandEntityListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getEntity().getWorld())) return;
         
         Entity entity = e.getEntity();
-        int stackSize = entity.getPersistentDataContainer().getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, -1);
+        PersistentDataContainer pdc = entity.getPersistentDataContainer();
+        int stackSize = pdc.getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, -1);
         if(stackSize == -1) return; // don't care about non-skymobs (maybe future feature?)
 
         if(!(e.getDamageSource().getCausingEntity() instanceof Player p)) {
@@ -77,7 +82,7 @@ public class IslandEntityListener implements Listener {
 
         stackSize--;
         if(stackSize > 0) {
-            entity.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
+            pdc.set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
             entity.customName(Component.text("x" + stackSize));
             for(ItemStack i : e.getDrops()) {
                 entity.getWorld().dropItemNaturally(p.getLocation(), i);
@@ -85,7 +90,8 @@ public class IslandEntityListener implements Listener {
             e.setCancelled(true);
         } else is.removeMobStack(entity.getType());
 
-        // TODO: handle mob study
+        Material studyItem = MobStudyItem.getMobMaterial(entity.getType());
+        is.getIslandStudy().tryIncreaseStudy(studyItem, 1);
     }
 	
 	@EventHandler
@@ -129,7 +135,8 @@ public class IslandEntityListener implements Listener {
         // try to find existing stack
         for(Entity nearby : entity.getNearbyEntities(8, 8, 8)) { // TODO: magic numbers
             if(nearby.getType() == type) {
-                int stackSize = nearby.getPersistentDataContainer().getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, -1);
+                PersistentDataContainer pdc = nearby.getPersistentDataContainer();
+                int stackSize = pdc.getOrDefault(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, -1);
                 if(stackSize == -1) continue; // don't stack with non-skymobs
 
                 e.setCancelled(true);
@@ -139,7 +146,7 @@ public class IslandEntityListener implements Listener {
                 stackSize += NeoSkySpawner.getSpawnerCount(loc);
                 if(stackSize > maxStackSize) stackSize = maxStackSize; // cap
 
-                nearby.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
+                pdc.set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, stackSize);
                 nearby.customName(Component.text("x" + stackSize));
 
                 return;
@@ -150,11 +157,19 @@ public class IslandEntityListener implements Listener {
         if(is.getSkySpawnerCount(type) > is.getMobStackCount(type)) {
             int startStackSize = NeoSkySpawner.getSpawnerCount(loc);
             if(startStackSize > maxStackSize) startStackSize = maxStackSize; // cap
+
+            if(entity instanceof LivingEntity living) {
+                living.setCanPickupItems(false);
+                if(living instanceof Mob mob) {
+                    mob.setAggressive(false);
+                    mob.setAware(false);
+                }
+            }
             entity.setPersistent(true);
-            if(entity instanceof LivingEntity living) living.setAI(false);
             entity.setCustomNameVisible(true);
             entity.customName(Component.text("x" + startStackSize));
             entity.getPersistentDataContainer().set(NEOSKY_MOB_KEY, PersistentDataType.INTEGER, startStackSize);
+            
             is.addMobStack(type);
         } else {
             e.setCancelled(true); // prevent new stack
