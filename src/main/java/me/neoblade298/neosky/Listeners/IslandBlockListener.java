@@ -4,12 +4,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -41,6 +44,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import me.neoblade298.neocore.bukkit.effects.ParticleContainer;
+import me.neoblade298.neocore.bukkit.effects.SoundContainer;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.IslandManager;
 import me.neoblade298.neosky.IslandPermissions;
@@ -304,8 +309,35 @@ public class IslandBlockListener implements Listener {
     public void onForm(BlockFormEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
+
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        if (is != null ) is.blockBreakRestrictions(e.getBlock());
+        if (is == null ) return;
+
+        is.blockBreakRestrictions(e.getBlock());
+
+        Material m = e.getNewState().getType();
+
+        SoundContainer sound = new SoundContainer(Sound.BLOCK_LAVA_EXTINGUISH, 2.0f, 0.25f),
+                        ore = new SoundContainer(Sound.BLOCK_AMETHYST_BLOCK_STEP, 1f, 2.0f);
+        ParticleContainer pc = new ParticleContainer(Particle.LARGE_SMOKE).count(5).spread(0.2, 0.2);
+
+        if(m == Material.COBBLESTONE) {
+            Location loc = e.getNewState().getLocation();
+        
+            Random rand = new Random();
+            double value = 0 + (1-0) * rand.nextDouble();
+
+            if(value <= is.getOreChance()) {
+                loc.getBlock().setType(is.randomOreBlock());
+                ore.play(loc);
+            } else {
+                loc.getBlock().setType(is.randomFillerBlock());
+                sound.play(loc);
+            }
+
+            pc.play(loc.add(0.5, 1, 0.5));
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -313,7 +345,7 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        is.blockBreakRestrictions(e.getToBlock());
+        if (is != null ) is.blockBreakRestrictions(e.getToBlock());
     }
 
     @EventHandler
@@ -321,7 +353,7 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        is.blockBreakRestrictions(e.getBlock());
+        if (is != null ) is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
@@ -329,7 +361,7 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        is.blockBreakRestrictions(e.getBlock());
+        if (is != null ) is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
@@ -337,7 +369,7 @@ public class IslandBlockListener implements Listener {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
         unmarkPlaced(e.getBlock().getLocation());
         Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        is.blockBreakRestrictions(e.getBlock());
+        if (is != null ) is.blockBreakRestrictions(e.getBlock());
     }
 
     @EventHandler
@@ -410,4 +442,7 @@ public class IslandBlockListener implements Listener {
     private static int encodeSubChunkPos(Location loc) {
         return (loc.getBlockY() & 0xFFF) | ((loc.getBlockX() & 0xF) << 12) | ((loc.getBlockZ() & 0xF) << 16);
     }
+
+
+
 }

@@ -1,9 +1,11 @@
 package me.neoblade298.neosky;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -45,6 +47,10 @@ public class Island {
         add(Material.REPEATER);
     }};
 
+    private double oreChance = 0.05;
+    private List<Material> fillerBlocks = new ArrayList<Material>();
+    private List<Material> oreBlocks = new ArrayList<Material>();
+
     private SkyPlayer owner;
     private Set<SkyPlayer> officers = new HashSet<SkyPlayer>();
     private Set<SkyPlayer> members = new HashSet<SkyPlayer>();
@@ -85,6 +91,12 @@ public class Island {
         radius = 10; // TODO: load from config
         maxMobStackSize = 10;
 
+        fillerBlocks.add(Material.COBBLESTONE);
+        fillerBlocks.add(Material.ANDESITE);
+        fillerBlocks.add(Material.GRANITE);
+        fillerBlocks.add(Material.DIORITE);
+        oreBlocks.add(Material.COAL_ORE);
+        oreBlocks.add(Material.IRON_ORE);
         loadPerms();
 
         owner.setMemberIsland(this);
@@ -353,6 +365,22 @@ public class Island {
         if(chunkX > MAX_ISLANDS_PER_ROW * islandWidth) return -1;
 
         return MAX_ISLANDS_PER_ROW * (chunkZ / islandWidth) + (chunkX / islandWidth);
+    }
+
+    public Material randomFillerBlock() {
+        int size = fillerBlocks.size();
+        Random rand = new Random();
+        return fillerBlocks.get(rand.nextInt(size));
+    }
+
+    public Material randomOreBlock() {
+        int size = oreBlocks.size();
+        Random rand = new Random();
+        return oreBlocks.get(rand.nextInt(size));
+    }
+
+    public double getOreChance() {
+        return oreChance;
     }
 
     public void blockPlaceRestrictions(Player p, Block b, BlockPlaceEvent e) {
