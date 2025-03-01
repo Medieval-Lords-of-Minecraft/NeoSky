@@ -10,8 +10,9 @@ import me.neoblade298.neocore.shared.commands.SubcommandRunner;
 import me.neoblade298.neosky.Island;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
-import me.neoblade298.neosky.study.MobStudyItem;
+import me.neoblade298.neosky.study.OreStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
+import me.neoblade298.neosky.study.TreeStudyItem;
 
 public class CmdAdminDebug extends Subcommand {
     public CmdAdminDebug(String key, String desc, String perm, SubcommandRunner runner) {
@@ -25,16 +26,29 @@ public class CmdAdminDebug extends Subcommand {
         Island is = sp.getMemberIsland();
         if(is == null) return;
 
-        if(!is.getIslandStudy().isStudyUnlocked(Material.PIG_SPAWN_EGG)) {
-            StudyItem study = new MobStudyItem();
-            study.item = Material.PIG_SPAWN_EGG;
+        Material mat = Material.COBBLESTONE;
+        if(!is.getIslandStudy().isStudyUnlocked(mat)) {
+            StudyItem study = new OreStudyItem();
+            study.item = mat;
             study.levelRequirements = new int[] {5, 10, 15};
             StudyItem.createItem(study);
             is.getIslandStudy().unlockStudy(study.item);
         }
 
-        Util.msg(sender, "Pig study amt: " + is.getIslandStudy().getStudyAmount(Material.PIG_SPAWN_EGG));
-        Util.msg(sender, "Pig study lvl: " + is.getIslandStudy().getStudyLevel(Material.PIG_SPAWN_EGG));
+        Util.msg(sender, "Cob study amt: " + is.getIslandStudy().getStudyAmount(mat));
+        Util.msg(sender, "Cob study lvl: " + is.getIslandStudy().getStudyLevel(mat));
+
+        Material mat2 = Material.OAK_LOG;
+        if(!is.getIslandStudy().isStudyUnlocked(mat2)) {
+            StudyItem study = new TreeStudyItem();
+            study.item = mat2;
+            study.levelRequirements = new int[] {2, 4, 6};
+            StudyItem.createItem(study);
+            is.getIslandStudy().unlockStudy(study.item);
+        }
+
+        Util.msg(sender, "Oak study amt: " + is.getIslandStudy().getStudyAmount(mat2));
+        Util.msg(sender, "Oak study lvl: " + is.getIslandStudy().getStudyLevel(mat2));
     }
 
 }

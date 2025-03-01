@@ -1,5 +1,6 @@
 package me.neoblade298.neosky.listeners;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -226,20 +228,21 @@ public class IslandBlockListener implements Listener {
             }
         }
 
+        List<Block> remarkableBlocks = new ArrayList<>();
         for(Block b : blocks) {
-            unmarkStudyable(b.getLocation());
+            if(isMarkedStudyable(b.getLocation())) {
+                StudyItem item = StudyItem.getItem(b.getType());
+                if(item instanceof OreStudyItem || item instanceof TreeStudyItem) {
+                    remarkableBlocks.add(b);
+                }
+                unmarkStudyable(b.getLocation());
+            }
             is.blockBreakRestrictions(b);
         }
 
-        blocks = blocks.stream().filter(x -> {
-            if(!isMarkedStudyable(x.getLocation())) return false;
-            StudyItem item = StudyItem.getItem(x.getType());
-            return item instanceof OreStudyItem || item instanceof TreeStudyItem;
-        }).toList(); // only remark solid studyables
-
         // need to remove all first then add all
-        for(Block b : blocks) {
-            markStudyable(b.getRelative(direction).getLocation());
+        for(Block b : remarkableBlocks) {
+            markStudyable(b.getRelative(direction).getLocation()); // only remarking solid studyables
         }
 
         return false;
@@ -309,6 +312,39 @@ public class IslandBlockListener implements Listener {
     }
 
     @EventHandler
+    public void onFlow(BlockFromToEvent e) {
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
+        unmarkStudyable(e.getBlock().getLocation());
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        if (is != null ) is.blockBreakRestrictions(e.getToBlock());
+    }
+
+    @EventHandler
+    public void onGrowStructure(StructureGrowEvent e) {
+        if(!NeoSky.isSkyWorld(e.getLocation().getWorld())) return;
+        
+        Island is = IslandManager.getIslandByLocation(e.getLocation());
+        if (is == null) return;
+        
+        for(BlockState newState : e.getBlocks()) {
+            tryMarkStudyable(newState.getLocation(), newState.getType());
+        }
+    }
+
+    @EventHandler
+    public void onGrowBlock(BlockGrowEvent e) {
+        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
+        
+        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
+        if (is == null) return;
+        
+        is.blockBreakRestrictions(e.getBlock());
+        
+        BlockState newState = e.getNewState();
+        tryMarkStudyable(newState.getLocation(), newState.getType());
+    }
+
+    @EventHandler
     public void onForm(BlockFormEvent e) {
         if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
 
@@ -322,17 +358,19 @@ public class IslandBlockListener implements Listener {
 
         is.blockBreakRestrictions(e.getBlock());
 
-        Material m = e.getNewState().getType();
+        BlockState newState = e.getNewState();
+
+        Material m = newState.getType();
 
         SoundContainer sound = new SoundContainer(Sound.BLOCK_LAVA_EXTINGUISH, 2.0f, 0.25f);
         SoundContainer ore = new SoundContainer(Sound.BLOCK_AMETHYST_BLOCK_STEP, 1f, 2.0f);
         ParticleContainer pc = new ParticleContainer(Particle.LARGE_SMOKE).count(5).spread(0.2, 0.2);
 
         if(m == Material.COBBLESTONE) {
-            Location loc = e.getNewState().getLocation();
+            Location loc = newState.getLocation();
         
             Random rand = new Random();
-            double value = 0 + (1-0) * rand.nextDouble();
+            double value = rand.nextDouble();
 
             if(value <= is.getOreChance()) {
                 loc.getBlock().setType(is.randomOreBlock());
@@ -346,30 +384,7 @@ public class IslandBlockListener implements Listener {
             e.setCancelled(true);
         }
 
-        tryMarkStudyable(e.getBlock().getLocation(), m);
-    }
-
-    @EventHandler
-    public void onFlow(BlockFromToEvent e) {
-        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
-        unmarkStudyable(e.getBlock().getLocation());
-        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        if (is != null ) is.blockBreakRestrictions(e.getToBlock());
-    }
-
-    @EventHandler
-    public void onGrow(BlockGrowEvent e) {
-        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
-        
-        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        if (is == null) return;
-        
-        is.blockBreakRestrictions(e.getBlock());
-        
-        BlockState newState = e.getNewState();
         tryMarkStudyable(newState.getLocation(), newState.getType());
-
-        // TODO: handle trees and stuff
     }
 
     @EventHandler
@@ -383,25 +398,6 @@ public class IslandBlockListener implements Listener {
         
         BlockState newState = e.getNewState();
         tryMarkStudyable(newState.getLocation(), newState.getType());
-
-        // TODO: handle trees and stuff
-        // also maybe dont have to call due to grow and form checks
-    }
-
-    @EventHandler
-    public void onForm(EntityBlockFormEvent e) {
-        if(!NeoSky.isSkyWorld(e.getBlock().getWorld())) return;
-        
-        Island is = IslandManager.getIslandByLocation(e.getBlock().getLocation());
-        if (is == null) return;
-        
-        is.blockBreakRestrictions(e.getBlock());
-        
-        BlockState newState = e.getNewState();
-        tryMarkStudyable(newState.getLocation(), newState.getType());
-
-        // TODO: handle trees and stuff
-        // also maybe dont have to call due to grow check
     }
 
     @EventHandler
