@@ -53,7 +53,9 @@ import me.neoblade298.neosky.NeoSky;
 import me.neoblade298.neosky.NeoSkySpawner;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
+import me.neoblade298.neosky.study.OreStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
+import me.neoblade298.neosky.study.TreeStudyItem;
 
 public class IslandBlockListener implements Listener {
     private static final NamespacedKey STUDYABLE_BLOCK_KEY = new NamespacedKey(NeoSky.inst(), "studyable_blocks");
@@ -212,6 +214,8 @@ public class IslandBlockListener implements Listener {
 
     // returns true if movement should be cancelled
     private boolean handlePistonMoveBlock(List<Block> blocks, BlockFace direction) {
+        if(blocks.isEmpty()) return false;
+
         Island is = IslandManager.getIslandByLocation(blocks.getFirst().getLocation());
         if(is == null) return false;
 
@@ -222,14 +226,16 @@ public class IslandBlockListener implements Listener {
             }
         }
 
-        blocks = blocks.stream().filter(x -> isMarkedStudyable(x.getLocation())).toList();
-
         for(Block b : blocks) {
             unmarkStudyable(b.getLocation());
             is.blockBreakRestrictions(b);
         }
 
-        blocks = blocks.stream().filter(x -> !breaksOnPistonPush(x.getType())).toList(); // exclude broken blocks
+        blocks = blocks.stream().filter(x -> {
+            if(!isMarkedStudyable(x.getLocation())) return false;
+            StudyItem item = StudyItem.getItem(x.getType());
+            return item instanceof OreStudyItem || item instanceof TreeStudyItem;
+        }).toList(); // only remark solid studyables
 
         // need to remove all first then add all
         for(Block b : blocks) {
@@ -237,10 +243,6 @@ public class IslandBlockListener implements Listener {
         }
 
         return false;
-    }
-
-    public boolean breaksOnPistonPush(Material mat) {
-        return false; // TODO
     }
 
     @EventHandler
