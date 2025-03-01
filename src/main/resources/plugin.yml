@@ -1,7 +1,7 @@
 name: NeoSky
 main: me.neoblade298.neosky.NeoSky
 authors: [Ascheladd, FoPzl, ShanaChan]
-depend: [NeoCore]
+depend: [NeoCore, WorldEdit]
 softdepend: []
 version: 0.1
 api-version: 1.20
