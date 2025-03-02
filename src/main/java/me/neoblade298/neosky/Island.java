@@ -1,5 +1,9 @@
 package me.neoblade298.neosky;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,6 +21,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
+
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.session.ClipboardHolder;
 
 import me.neoblade298.neocore.bukkit.util.Util;
 
@@ -72,16 +89,42 @@ public class Island {
     private Map<EntityType, Integer> mobStacks = new HashMap<EntityType, Integer>();
     private Map<EntityType, Integer> skySpawners = new HashMap<EntityType, Integer>(); // physical only
 
+    private static Clipboard islandBuild = loadClipboard("skyblock.schem");
+
+    private static Clipboard loadClipboard(String schematic) {
+		File file = new File(NeoSky.SCHEMATIC_FOLDER, schematic);
+		ClipboardFormat format = ClipboardFormats.findByFile(file);
+		try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+			return reader.read();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+    private static void pasteSchematic(
+			Clipboard clipboard, EditSession editSession, double x, double y, double z
+	) {
+		Operation operation = new ClipboardHolder(clipboard).createPaste(editSession)
+				.to(BlockVector3.at(x, y, z))
+				.ignoreAirBlocks(false).build();
+		try {
+			Operations.complete(operation);
+		} catch (WorldEditException e) {
+			e.printStackTrace();
+		}
+	}
+
     public Island(SkyPlayer owner, int index) {
         this.owner = owner;
         this.members.add(owner);
         center = indexToLocation(index);
 
-        for(int xOffset = -1; xOffset < 1; xOffset++) {
-            for(int zOffset = -1; zOffset < 1; zOffset++) {
-                center.clone().add(xOffset, 0, zOffset).getBlock().setType(Material.COBBLESTONE);
-            }
-        }
+        try (EditSession editSession = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(Bukkit.getWorld("neoskyblockworld")))) {
+			pasteSchematic(islandBuild, editSession, center.x(), center.y()+1, center.z());
+		}
 
         spawn = center.clone();
         spawn.add(0, 1, 0);

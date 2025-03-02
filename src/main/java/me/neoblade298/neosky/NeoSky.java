@@ -1,5 +1,7 @@
 package me.neoblade298.neosky;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
@@ -38,6 +40,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class NeoSky extends JavaPlugin {
     private static final String SKY_WORLD_NAME = "neoskyblockworld";
     private static final String SPAWN_WORLD_NAME = "Dev";
+
+    public static File SCHEMATIC_FOLDER = new File("/home/MLMC/Dev/plugins/WorldEdit/schematics");
 
     private static NeoSky instance;
 
