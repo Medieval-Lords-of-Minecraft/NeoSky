@@ -57,17 +57,16 @@ public class Island {
     private int redstoneAmount = 0;
     private int redstoneLimit = 10;
 
+    // TODO: add more
     private HashSet<Material> redstoneMats = new HashSet<>() {{
         add(Material.REDSTONE_WIRE);
-        add(Material.REDSTONE);
-        add(Material.STONE_BUTTON);
         add(Material.REDSTONE_TORCH);
         add(Material.REPEATER);
     }};
 
     private double oreChance = 0.05;
     private List<Material> fillerBlocks = new ArrayList<Material>();
-    private List<Material> oreBlocks = new ArrayList<Material>();
+    private List<Material> oreBlocks = new ArrayList<Material>(); // TODO: get from study
 
     private SkyPlayer owner;
     private Set<SkyPlayer> officers = new HashSet<SkyPlayer>();
