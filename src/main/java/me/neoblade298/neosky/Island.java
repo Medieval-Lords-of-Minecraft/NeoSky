@@ -9,14 +9,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -56,17 +57,16 @@ public class Island {
     private int redstoneAmount = 0;
     private int redstoneLimit = 10;
 
+    // TODO: add more
     private HashSet<Material> redstoneMats = new HashSet<>() {{
         add(Material.REDSTONE_WIRE);
-        add(Material.REDSTONE);
-        add(Material.STONE_BUTTON);
         add(Material.REDSTONE_TORCH);
         add(Material.REPEATER);
     }};
 
     private double oreChance = 0.05;
     private List<Material> fillerBlocks = new ArrayList<Material>();
-    private List<Material> oreBlocks = new ArrayList<Material>();
+    private List<Material> oreBlocks = new ArrayList<Material>(); // TODO: get from study
 
     private SkyPlayer owner;
     private Set<SkyPlayer> officers = new HashSet<SkyPlayer>();
@@ -502,33 +502,10 @@ public class Island {
                 redstoneAmount -= 1;
             }
         }
-    }
 
-
-    public void blockBreakRestrictions(Material m) {
-        if(m == null) {
-            return;
-        }
-        
-        if (m == Material.HOPPER) {
-            if(hopperAmount > 0) {
-                hopperAmount -= 1;
-            } 
-        }
-
-        if (m == Material.PISTON || m == Material.STICKY_PISTON) {
-            if(pistonAmount > 0) {
-                pistonAmount -= 1;
-            }
-        }
-
-        if (m == Material.SPAWNER) {
-            if(spawnerAmount > 0) {
-                spawnerAmount -= 1;
-            }
-        }
-
-        if (redstoneMats.contains(m)) {
+        // quick and dirty for now
+        Block above = b.getRelative(BlockFace.UP);
+        if (redstoneMats.contains(above.getType())) {
             if(redstoneAmount > 0) {
                 redstoneAmount -= 1;
             }

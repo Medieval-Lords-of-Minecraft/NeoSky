@@ -474,7 +474,4 @@ public class IslandBlockListener implements Listener {
     private static int encodeSubChunkPos(Location loc) {
         return (loc.getBlockY() & 0xFFF) | ((loc.getBlockX() & 0xF) << 12) | ((loc.getBlockZ() & 0xF) << 16);
     }
-
-
-
 }

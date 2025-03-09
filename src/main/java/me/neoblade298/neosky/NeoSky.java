@@ -39,9 +39,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public class NeoSky extends JavaPlugin {
     private static final String SKY_WORLD_NAME = "neoskyblockworld";
-    private static final String SPAWN_WORLD_NAME = "Dev";
+    private static final String SPAWN_WORLD_NAME = "Dev"; // temp
 
-    public static File SCHEMATIC_FOLDER = new File("/home/MLMC/Dev/plugins/WorldEdit/schematics");
+    public static File SCHEMATIC_FOLDER = new File("/home/MLMC/Dev/plugins/WorldEdit/schematics"); // TODO: load from config
 
     private static NeoSky instance;
 
@@ -51,7 +51,7 @@ public class NeoSky extends JavaPlugin {
 
         instance = this;
 
-        createWorld();
+        createSkyWorld();
 
         SubcommandManager mgr = new SubcommandManager("island", "neosky.general", NamedTextColor.AQUA, this);
         mgr.register(new CmdIsland("", "View your island menu", null, SubcommandRunner.PLAYER_ONLY));
@@ -74,8 +74,8 @@ public class NeoSky extends JavaPlugin {
         mgr.register(new CmdIslandPermissions("permissions", "Opens permissions menu", null, SubcommandRunner.PLAYER_ONLY));
         
         mgr = new SubcommandManager("nsa", "neosky.admin", NamedTextColor.AQUA, this);
-        mgr.register(new CmdAdminDebug("debug", "Debug command", "neosky.admin", SubcommandRunner.PLAYER_ONLY));
-        mgr.register(new CmdAdminSpawner("spawner", "Give specified spawner", "neosky.admin", SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdAdminDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
+        mgr.register(new CmdAdminSpawner("spawner", "Give specified spawner", null, SubcommandRunner.PLAYER_ONLY));
 
         Bukkit.getPluginManager().registerEvents(new IslandBlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new IslandEntityListener(), this);
@@ -98,7 +98,7 @@ public class NeoSky extends JavaPlugin {
         return instance;
     }
 
-    private void createWorld() {
+    private static void createSkyWorld() {
         if(Bukkit.getWorld(SKY_WORLD_NAME) != null) return;
         
         WorldCreator creator = new WorldCreator(SKY_WORLD_NAME);
