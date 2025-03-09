@@ -104,9 +104,7 @@ public class Island {
 		return null;
 	}
 
-    private static void pasteSchematic(
-			Clipboard clipboard, EditSession editSession, double x, double y, double z
-	) {
+    private static void pasteSchematic(Clipboard clipboard, EditSession editSession, double x, double y, double z) {
 		Operation operation = new ClipboardHolder(clipboard).createPaste(editSession)
 				.to(BlockVector3.at(x, y, z))
 				.ignoreAirBlocks(false).build();
