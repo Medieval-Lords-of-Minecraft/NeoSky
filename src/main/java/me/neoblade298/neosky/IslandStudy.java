@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
 import me.neoblade298.neosky.study.StudyItem;
@@ -38,6 +40,16 @@ public class IslandStudy {
 
     public int getStudyLevel(Material item) {
         return studyLevels.getOrDefault(item, 0);
+    }
+
+    // returns true if study increased
+    public boolean tryIncreaseStudy(Block block, int amount) {
+
+    }
+
+    // returns true if study increased
+    public boolean tryIncreaseStudy(Entity entity, int amount) {
+
     }
 
     // returns true if study increased

@@ -26,7 +26,7 @@ public class CmdAdminDebug extends Subcommand {
         Island is = sp.getMemberIsland();
         if(is == null) return;
 
-        Material mat = Material.COBBLESTONE;
+        Material mat = Material.WHEAT;
         if(!is.getIslandStudy().isStudyUnlocked(mat)) {
             StudyItem study = new OreStudyItem();
             study.item = mat;
