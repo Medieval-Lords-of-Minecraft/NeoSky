@@ -9,9 +9,11 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Entity;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
+import me.neoblade298.neosky.study.MobStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
 
 public class IslandStudy {
@@ -43,17 +45,31 @@ public class IslandStudy {
     }
 
     // returns true if study increased
-    public boolean tryIncreaseStudy(Block block, int amount) {
-
+    public boolean tryIncreaseStudy(Block block, int amount, SkyPlayer sp) {
+        Material mat = block.getType();
+        if(block.getBlockData() instanceof Ageable a) {
+            // TODO: make this not stupid, i am lazy right now
+            if(mat != Material.CACTUS &&
+               mat != Material.BAMBOO &&
+               mat != Material.FROSTED_ICE &&
+               mat != Material.KELP &&
+               mat != Material.SUGAR_CANE &&
+               mat != Material.TWISTING_VINES &&
+               mat != Material.WEEPING_VINES &&
+               a.getAge() < a.getMaximumAge()) return false;
+        }
+        return tryIncreaseStudy(mat, amount, sp);
     }
 
     // returns true if study increased
-    public boolean tryIncreaseStudy(Entity entity, int amount) {
-
+    public boolean tryIncreaseStudy(Entity entity, int amount, SkyPlayer sp) {
+        Material mat = MobStudyItem.getMobMaterial(entity.getType());
+        if(mat == null) return false;
+        return tryIncreaseStudy(mat, amount, sp);
     }
 
     // returns true if study increased
-    public boolean tryIncreaseStudy(Material item, int amount) {
+    private boolean tryIncreaseStudy(Material item, int amount, SkyPlayer sp) {
         if(amount < 1) return false;
         if(!unlockedStudies.contains(item)) return false;
 
@@ -62,11 +78,14 @@ public class IslandStudy {
 
         StudyItem study = StudyItem.getItem(item);
         int level = studyLevels.get(item);
-        while(newAmount >= study.getLevelRequirement(level + 1)) {
+        while(study.getLevelRequirement(level + 1) < newAmount) {
             level++;
             study.onUnlock(level, this);
             studyLevels.put(item, level);
         }
+
+        sp.increaseStudy(item, newAmount);
+
         return true;
     }
 

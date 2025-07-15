@@ -85,9 +85,7 @@ public class IslandBlockListener implements Listener {
 
         if(is == sp.getMemberIsland() && e.isDropItems()) {
             if(isMarkedStudyable(loc)) {
-                if(is.getIslandStudy().tryIncreaseStudy(b.getType(), 1)) {
-                    sp.increaseStudy(b.getType(), 1);
-                }
+                is.getIslandStudy().tryIncreaseStudy(b, 1, sp);
                 unmarkStudyable(loc);
                 return;
             }

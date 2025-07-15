@@ -1,7 +1,6 @@
 package me.neoblade298.neosky.listeners;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -32,7 +31,6 @@ import me.neoblade298.neosky.NeoSky;
 import me.neoblade298.neosky.NeoSkySpawner;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
-import me.neoblade298.neosky.study.MobStudyItem;
 import net.kyori.adventure.text.Component;
 
 public class IslandEntityListener implements Listener {
@@ -90,8 +88,7 @@ public class IslandEntityListener implements Listener {
             e.setCancelled(true);
         } else is.removeMobStack(entity.getType());
 
-        Material studyItem = MobStudyItem.getMobMaterial(entity.getType());
-        is.getIslandStudy().tryIncreaseStudy(studyItem, 1);
+        is.getIslandStudy().tryIncreaseStudy(entity, 1, sp);
     }
 	
 	@EventHandler
