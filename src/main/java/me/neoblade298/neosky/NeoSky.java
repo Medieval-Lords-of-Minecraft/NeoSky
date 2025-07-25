@@ -35,6 +35,7 @@ import me.neoblade298.neosky.commands.CmdIslandVisit;
 import me.neoblade298.neosky.listeners.IslandBlockListener;
 import me.neoblade298.neosky.listeners.IslandEntityListener;
 import me.neoblade298.neosky.listeners.IslandPlayerListener;
+import me.neoblade298.neosky.study.StudyItem;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class NeoSky extends JavaPlugin {
@@ -53,8 +54,10 @@ public class NeoSky extends JavaPlugin {
 
         createSkyWorld();
 
+        StudyItem.load();
+
         registerCommands();
-        
+
         registerEvents();
 
         new BukkitRunnable() {

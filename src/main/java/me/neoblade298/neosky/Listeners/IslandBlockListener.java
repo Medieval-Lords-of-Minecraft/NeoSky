@@ -55,9 +55,9 @@ import me.neoblade298.neosky.NeoSky;
 import me.neoblade298.neosky.NeoSkySpawner;
 import me.neoblade298.neosky.SkyPlayer;
 import me.neoblade298.neosky.SkyPlayerManager;
-import me.neoblade298.neosky.study.OreStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
-import me.neoblade298.neosky.study.TreeStudyItem;
+import me.neoblade298.neosky.study.ore.OreStudyItem;
+import me.neoblade298.neosky.study.tree.TreeStudyItem;
 
 public class IslandBlockListener implements Listener {
     private static final NamespacedKey STUDYABLE_BLOCK_KEY = new NamespacedKey(NeoSky.inst(), "studyable_blocks");

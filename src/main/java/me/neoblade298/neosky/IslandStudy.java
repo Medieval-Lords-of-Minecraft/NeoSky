@@ -13,8 +13,8 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Entity;
 
 import me.neoblade298.neocore.bukkit.NeoCore;
-import me.neoblade298.neosky.study.MobStudyItem;
 import me.neoblade298.neosky.study.StudyItem;
+import me.neoblade298.neosky.study.mob.MobStudyItem;
 
 public class IslandStudy {
     private Map<Material, Integer> studyAmounts = new HashMap<Material, Integer>();
@@ -32,6 +32,10 @@ public class IslandStudy {
         for(Environment val : Environment.values()) {
             unlockedOres.put(val, new ArrayList<Material>());
         }
+
+        for(Material mat : StudyItem.defaultUnlocked) {
+            unlockStudy(mat);
+        }
     }
 
     // TODO: private Set<CustomRecipe> or something for unlocked recipes
@@ -41,7 +45,7 @@ public class IslandStudy {
     }
 
     public int getStudyLevel(Material item) {
-        return studyLevels.getOrDefault(item, 0);
+        return studyLevels.getOrDefault(item, -1);
     }
 
     // returns true if study increased
@@ -78,7 +82,7 @@ public class IslandStudy {
 
         StudyItem study = StudyItem.getItem(item);
         int level = studyLevels.get(item);
-        while(study.getLevelRequirement(level + 1) < newAmount) {
+        while(newAmount >= study.getLevelRequirement(level + 1)) {
             level++;
             study.onUnlock(level, this);
             studyLevels.put(item, level);
@@ -111,12 +115,16 @@ public class IslandStudy {
 
     public void unlockStudy(Material item) {
         unlockedStudies.add(item);
-        studyLevels.put(item, 1);
+        studyLevels.put(item, 0);
+
+        // todo: if ore add to unlockedOres
     }
 
     public void relockStudy(Material item) {
         unlockedStudies.remove(item);
-        studyLevels.put(item, 0);
+        studyLevels.put(item, -1);
+
+        // todo: if ore remove from unlockedOres
     }
 
     public boolean isSpecialUnlocked(Material item) {
