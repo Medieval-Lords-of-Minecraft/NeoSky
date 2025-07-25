@@ -53,6 +53,28 @@ public class NeoSky extends JavaPlugin {
 
         createSkyWorld();
 
+        registerCommands();
+        
+        registerEvents();
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                IslandManager.restrictPlayersToIslands();
+            }
+        }.runTaskTimer(this, 0, 50);
+    }
+
+    public void onDisable() {
+        super.onDisable();
+        Bukkit.getServer().getLogger().info("NeoSky Disabled");
+    }
+
+    public static NeoSky inst() {
+        return instance;
+    }
+
+    private void registerCommands() {
         SubcommandManager mgr = new SubcommandManager("island", "neosky.general", NamedTextColor.AQUA, this);
         mgr.register(new CmdIsland("", "View your island menu", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdIslandNew("new", "Create a new island", null, SubcommandRunner.PLAYER_ONLY));
@@ -76,26 +98,12 @@ public class NeoSky extends JavaPlugin {
         mgr = new SubcommandManager("nsa", "neosky.admin", NamedTextColor.AQUA, this);
         mgr.register(new CmdAdminDebug("debug", "Debug command", null, SubcommandRunner.PLAYER_ONLY));
         mgr.register(new CmdAdminSpawner("spawner", "Give specified spawner", null, SubcommandRunner.PLAYER_ONLY));
+    }
 
+    private void registerEvents() {
         Bukkit.getPluginManager().registerEvents(new IslandBlockListener(), this);
         Bukkit.getPluginManager().registerEvents(new IslandEntityListener(), this);
         Bukkit.getPluginManager().registerEvents(new IslandPlayerListener(), this);
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                IslandManager.restrictPlayersToIslands();
-            }
-        }.runTaskTimer(this, 0, 50);
-    }
-
-    public void onDisable() {
-        super.onDisable();
-        Bukkit.getServer().getLogger().info("NeoSky Disabled");
-    }
-
-    public static NeoSky inst() {
-        return instance;
     }
 
     private static void createSkyWorld() {
