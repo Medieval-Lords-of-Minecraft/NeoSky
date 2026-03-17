@@ -1,0 +1,9 @@
+name: NeoSkyBackend
+version: 1.0.0
+main: me.ascheladd.neosky.backend.NeoSkyBackend
+api-version: '1.21'
+description: NeoSky backend plugin for world loading and player distribution
+authors:
+  - Ascheladd
+depend:
+  - SlimeWorldManager

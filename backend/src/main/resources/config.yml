@@ -1,0 +1,33 @@
+# NeoSky Backend Configuration
+
+# Unique identifier for this server — must match the name in Velocity's server list
+server-id: "skyblock-1"
+
+# Redis connection settings (must match the Velocity plugin's config)
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""
+  timeout: 3000
+
+# MongoDB connection settings for AdvancedSlimePaper world storage
+mongodb:
+  host: "localhost"
+  port: 27017
+  database: "neosky"
+  collection: "worlds"
+  auth-source: "admin"
+  username: ""
+  password: ""
+
+# World unload settings
+unload:
+  # Time in seconds to wait after the last player leaves before unloading a world
+  grace-period-seconds: 60
+  # How often (in seconds) to check for empty worlds
+  check-interval-seconds: 30
+
+# Heartbeat settings
+heartbeat:
+  # How often (in seconds) to send heartbeat to the proxy
+  interval-seconds: 5

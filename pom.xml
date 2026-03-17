@@ -4,24 +4,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.neoblade298</groupId>
-    <artifactId>NeoSky</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>me.ascheladd.neosky</groupId>
+    <artifactId>neosky-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>NeoSky</name>
+    <description>Skyblock system with world load-balancing and player distribution</description>
+
+    <modules>
+        <module>common</module>
+        <module>velocity</module>
+        <module>backend</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jedis.version>5.1.0</jedis.version>
+        <gson.version>2.10.1</gson.version>
+        <velocity.version>3.5.0-SNAPSHOT</velocity.version>
+        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
+        <asp.version>4.0.0-SNAPSHOT</asp.version>
     </properties>
-
-    <build>
-        <defaultGoal>install</defaultGoal>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-            </plugin>
-        </plugins>
-    </build>
 
     <repositories>
         <repository>
@@ -29,37 +34,84 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>sk89q</id>
-            <url>https://maven.enginehub.org/repo/</url>
+            <id>infernalsuite-snapshots</id>
+            <url>https://repo.infernalsuite.com/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.neoblade298</groupId>
-            <artifactId>NeoCore</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/NeoCore-0.0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-core</artifactId>
-            <version>7.4.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-bukkit</artifactId>
-            <version>7.4.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Internal modules -->
+            <dependency>
+                <groupId>me.ascheladd.neosky</groupId>
+                <artifactId>neosky-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
+            <!-- Redis -->
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+            <!-- JSON serialization (provided by both Paper and Velocity at runtime) -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Velocity -->
+            <dependency>
+                <groupId>com.velocitypowered</groupId>
+                <artifactId>velocity-api</artifactId>
+                <version>${velocity.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Paper -->
+            <dependency>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
+                <version>${paper.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- AdvancedSlimePaper -->
+            <dependency>
+                <groupId>com.infernalsuite.asp</groupId>
+                <artifactId>api</artifactId>
+                <version>${asp.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.infernalsuite.asp</groupId>
+                <artifactId>mongo-loader</artifactId>
+                <version>${asp.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
